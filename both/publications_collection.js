@@ -13,7 +13,7 @@ PublicationsSchema = new SimpleSchema({
 	    label: "target",
 	    optional:true,    
   	},
-  	"citations": {
+  	"citation_count": {
 	    type: Number,
 	    label: "target"
 	},

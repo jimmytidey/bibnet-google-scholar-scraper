@@ -3,7 +3,7 @@ Authors = new Mongo.Collection('Authors');
 AuthorsSchema = new SimpleSchema({
  "name": {
     type: String,
-    label: "Type"
+    label: "name"
   },
   "google_author_id": {
     type: String,
