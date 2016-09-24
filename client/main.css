@@ -1,1 +1,9 @@
-/* CSS declarations go here */
+ul.pagination {
+
+    list-style-type: none;
+ }
+
+ ul.pagination li{
+ 	float:right;
+ 	padding:0px 10px;
+ }

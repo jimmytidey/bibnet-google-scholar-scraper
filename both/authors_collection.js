@@ -1,4 +1,4 @@
-Authors = new Mongo.Collection('Authors');
+Authors = new Mongo.Collection('authors');
 
 AuthorsSchema = new SimpleSchema({
  "name": {

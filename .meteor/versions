@@ -3,6 +3,7 @@ aldeed:collection2-core@1.2.0
 aldeed:schema-deny@1.1.0
 aldeed:schema-index@1.1.0
 aldeed:simple-schema@1.5.3
+aldeed:tabular@1.6.1
 allow-deny@1.0.5
 autopublish@1.0.7
 autoupdate@1.2.11
@@ -14,6 +15,7 @@ blaze@2.1.8
 blaze-html-templates@1.0.4
 blaze-tools@1.0.9
 boilerplate-generator@1.0.9
+bootstrap@1.0.1
 caching-compiler@1.0.6
 caching-html-compiler@1.0.6
 callback-hook@1.0.9
@@ -59,10 +61,12 @@ ordered-dict@1.0.8
 promise@0.8.4
 raix:eventemitter@0.1.3
 random@1.0.10
+reactive-dict@1.1.8
 reactive-var@1.0.10
 reload@1.1.10
 retry@1.0.8
 routepolicy@1.0.11
+session@1.1.6
 shell-server@0.2.1
 spacebars@1.0.12
 spacebars-compiler@1.0.12

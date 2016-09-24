@@ -24,3 +24,6 @@ mrt:cheerio
 http
 aldeed:simple-schema
 aldeed:collection2
+aldeed:tabular
+session
+bootstrap

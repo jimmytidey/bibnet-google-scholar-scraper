@@ -1,4 +1,4 @@
-Edges = new Mongo.Collection('Edges');
+Edges = new Mongo.Collection('edges');
 
 EdgesSchema = new SimpleSchema({
  "type": {

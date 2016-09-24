@@ -1,4 +1,4 @@
-Publications = new Mongo.Collection('Publications');
+Publications = new Mongo.Collection('publications');
 PublicationsSchema = new SimpleSchema({
 	"google_cluster_id": {
 	    type: String,
