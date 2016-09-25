@@ -3,20 +3,14 @@ import { ReactiveVar } from 'meteor/reactive-var';
 
 import './main.html';
 
-Template.hello.onCreated(function helloOnCreated() {
-  // counter starts at 0
-  this.counter = new ReactiveVar(0);
-});
 
-Template.hello.helpers({
-  counter() {
-    return Template.instance().counter.get();
-  },
-});
-
-Template.hello.events({
-  'click button'(event, instance) {
-    // increment the counter when button is clicked
-    instance.counter.set(instance.counter.get() + 1);
+Template.body.events({
+  'click .find-papers'(event) {
+    // Prevent default browser form submit
+    event.preventDefault();
+ 	
+ 	console.log('finding papers');
+    var list_of_papers = $('.list-of-papers').val();
+    Meteor.call('findPapers', list_of_papers);
   },
 });

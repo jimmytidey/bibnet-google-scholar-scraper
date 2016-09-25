@@ -26,4 +26,4 @@ aldeed:simple-schema
 aldeed:collection2
 aldeed:tabular
 session
-bootstrap
+twbs:bootstrap

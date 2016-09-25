@@ -2,20 +2,20 @@ Publications = new Mongo.Collection('publications');
 PublicationsSchema = new SimpleSchema({
 	"google_cluster_id": {
 	    type: String,
-	    label: "Type"
+	    label: "Google Cluster ID"
 	},
   	"title": {
 	    type: String,
-	    label: "Google author id",
+	    label: "Google Author ID",
   	},
   	"pdf_link": {
-	    type: [String],
-	    label: "target",
+	    type: String,
+	    label: "PDF Link ",
 	    optional:true,    
   	},
   	"citation_count": {
 	    type: Number,
-	    label: "target"
+	    label: "Citation Count"
 	},
   	"publication_date": {
 	    type: Date,

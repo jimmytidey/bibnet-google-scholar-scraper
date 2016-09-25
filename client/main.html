@@ -5,17 +5,32 @@
 <body>
   
   <div class='container'> 
-    
-    
-      <h1>Bibnet</h1>
-     
-        
+  		<h1>BibNet</h1>
 
-        {{> tabular table=TabularTables.Authors class="table table-striped table-bordered "}}
-        {{> tabular table=TabularTables.Publications class="table table-striped table-bordered "}}
-     
-   
-  
-  </div>
+  		{{> inputPapers }}
+
+		{{> tabular table=TabularTables.Authors class="table table-striped table-bordered table-condensed"}}
+
+		
+		{{> tabular table=TabularTables.Publications class="table table-striped table-bordered table-condensed"}}
+		{{> tabular table=TabularTables.Edges class="table table-striped table-bordered table-condensed"}}
+		
+	</div>
 </body>
 
+
+<template name="inputPapers">
+	<br/> 
+	<div class='row'> 
+		<div class='col-md-6'>
+			<textarea class='list-of-papers' > 
+			</textarea>
+		</div>  
+
+		<div class='col-md-6'>
+			<button type="button" class="btn btn-default find-papers">Find papers</button>
+			<button type="button" class="btn btn-default add-citations">Add Citations</button>
+		</div>    
+	</div>
+	<br/>
+</template>

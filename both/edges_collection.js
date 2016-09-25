@@ -7,11 +7,11 @@ EdgesSchema = new SimpleSchema({
   },
   "source": {
     type: SimpleSchema.RegEx.Id,
-    label: "Coffee Farm Name",
+    label: "Source",
   },
   "target": {
     type: SimpleSchema.RegEx.Id,
-    label: "target"
+    label: "Target"
   }
 });
 
