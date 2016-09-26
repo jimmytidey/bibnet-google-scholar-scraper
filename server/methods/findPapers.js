@@ -1,9 +1,13 @@
 Meteor.methods({
 	findPapers: function (list_of_papers) {
-				
+		
+		console.log('find papers called'); 
+
 		list_of_papers = 'ostrom governing the commons \n mancur olson the logic of collective action \n ostrom and hess'
 
 		bibnet.list_of_papers = list_of_papers.split(/\n/)
+
+		bibnet.list_of_papers.length = 1;
 
 		bibnet.paperSearchTimer = Meteor.setInterval(function(){
 			
@@ -19,6 +23,6 @@ Meteor.methods({
 				console.log('SEARCH ENDED');
 				Meteor.clearInterval(bibnet.paperSearchTimer);
 			}
-		}, (Math.random() * 10000) + 2000) 
+		}, (Math.random() * 10000) + 5000) 
 	}
 });
