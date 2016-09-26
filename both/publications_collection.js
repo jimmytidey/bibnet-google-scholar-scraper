@@ -6,11 +6,11 @@ PublicationsSchema = new SimpleSchema({
 	},
   	"title": {
 	    type: String,
-	    label: "Google Author ID",
+	    label: "Title",
   	},
   	"pdf_link": {
 	    type: String,
-	    label: "PDF Link ",
+	    label: "PDF Link",
 	    optional:true,    
   	},
   	"citation_count": {

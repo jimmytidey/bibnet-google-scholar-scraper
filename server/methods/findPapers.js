@@ -21,6 +21,6 @@ Meteor.methods({
 				console.log('SEARCH ENDED');
 				Meteor.clearInterval(bibnet.paperSearchTimer);
 			}
-		}, (Math.random() * 10000) + 5000) 
+		}, (Math.random() * 10000) + 2000) 
 	}
 });
