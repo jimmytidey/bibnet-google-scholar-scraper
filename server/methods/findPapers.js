@@ -1,7 +1,7 @@
 Meteor.methods({
 	findPapers: function (list_of_papers) {
 				
-		list_of_papers = 	'ostrom governing the commons \n mancur olson the logic of collective action \n ostrom and hess'
+		list_of_papers = 'ostrom governing the commons \n mancur olson the logic of collective action \n ostrom and hess'
 
 		bibnet.list_of_papers = list_of_papers.split(/\n/)
 

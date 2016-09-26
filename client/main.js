@@ -15,4 +15,9 @@ Template.body.events({
 		console.log('adding citations');
 		Meteor.call('addCitations');
 	},
+	'click .remove-citations'(event) {
+		event.preventDefault();
+		console.log('removing citations');
+		Meteor.call('removeCitations');
+	}
 });

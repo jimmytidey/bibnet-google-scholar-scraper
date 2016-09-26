@@ -21,8 +21,7 @@ TabularTables.Publications = new Tabular.Table({
     {data: "pdf_link", title: "PDF Link"},
     {data: "publication_date", title: "Date"},
     {data: "google_cluster_id", title: "Google ID"},
-    {data: "citation_count", title: "Citation Count"},
-    {data: "citation_search", title: "Citation Search"}
+    {data: "citation_count", title: "Citation Count"}
   ]
 });
 
