@@ -10,7 +10,7 @@ Meteor.methods({
 
 		_.each(publications, function(publication, pub_key){
 			_.each(authors, function(author, author_key){
-				var url = "https://scholar.google.co.uk/scholar?q="+ author.name +"&btnG=&hl=en&as_sdt=2005&sciodt=0%2C5&cites=" + publication.google_cluster_id + "=1";
+				var url = "https://scholar.google.co.uk/scholar?as_vis=1&q="+ author.name +"&btnG=&hl=en&as_sdt=2005&sciodt=0%2C5&cites=" + publication.google_cluster_id + "=1";
 				var cite_search_obj = { 
 					publication_obj	: publication,  
 					author_obj		: author,

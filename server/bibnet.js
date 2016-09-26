@@ -26,14 +26,12 @@ bibnet.SearchForPublications = function(search_string) {
 	
 	$ = cheerio.load(result.body);
 	
-	for(var i=1; i<11; i++) {
+	var number_of_results = $('#gs_ccl_results > div').length;  
+	console.log('number_of_results ', number_of_results); 
+
+	for(var i=1; i<number_of_results; i++) {
 		
-		try { 
-			bibnet.parsePublication(i); 
-		
-		} catch(err) {
-			console.log(err)
-		}
+		bibnet.parsePublication(i); 
 	}
 }
 
@@ -45,13 +43,10 @@ bibnet.addCitations = function (cite_search_obj) {
 
 	$ = cheerio.load(result.body);
 	
-	for(var i=1; i<11; i++) {
-		try { 
-			bibnet.parseCitation(i, cite_search_obj); 
-		
-		} catch(err) {
-			console.log(err)
-		}
+	var number_of_results = $('#gs_ccl_results > div').length; 
+
+	for(var i=1; i<number_of_results; i++) {
+		bibnet.parseCitation(i, cite_search_obj); 
 	}
 
 }
@@ -77,15 +72,15 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 
 
 	if(bibnet.isRateLimited()) { 
-		throw "---------Google hates you------------";
+		console.log('google hates you')
 		return false; 
 	} 
 
 	// check that this result really is a citation of the author in question
-	var relevant_author_name = $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri .gs_a b').text(); 
+	var author_names = $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri .gs_a ').text(); 
+	var author_found =  author_names.search(cite_search_obj.author_obj.name);
 
-
-	if (relevant_author_name === cite_search_obj.author_obj.name && !bibnet.isAuthorListing(item_number)) { 
+	if (author_found !== -1  && !bibnet.isAuthorListing(item_number)) { 
 		
 		target_publication_obj = bibnet.parsePublicationItem(item_number);
 
@@ -96,7 +91,7 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 			source_author_obj = { 
 				name: val.trim().replace(/\./g,'')
 			}   
-			bibnet.insertAuthorship(source_author_obj, target_publication_obj)
+			bibnet.insertAuthorship(target_publication_obj, source_author_obj)
 		});
 
 		source_publication_obj 	= Publications.findOne({google_cluster_id: target_publication_obj.google_cluster_id}); 
@@ -106,28 +101,31 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 	}
 	else {
 		console.log('Not a relevant citation ' 
-			+  relevant_author_name  + ' citing ' + cite_search_obj.publication_obj.title.slice(0,50)); 
+			+  author_names  + ' citing ' + cite_search_obj.publication_obj.title.slice(0,50)); 
+		console.log('does not contain: ', cite_search_obj.author_obj.name)
 	}
 } 
 
 bibnet.parsePublication = function(item_number) { 
 
 	if(bibnet.isRateLimited()) { 
-		throw "Google hates you";
+		console.log('google hates you')
 		return false; 
 	} 
 	
-	target_publication_obj = bibnet.parsePublicationItem(item_number);
+	source_publication_obj = bibnet.parsePublicationItem(item_number);
 
 	var author_string 		= $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > div.gs_a ').text().split('-')[0];
 	var author_array 	   	= author_string.split(','); 
 
 	_.each(author_array, function(val, key){ 
-		source_author_obj = { 
-			name: val.trim().replace('…', '')
+		var cleaned_name = val.replace('…', '')
+		cleaned_name = cleaned_name.trim()
+		target_author_obj = { 
+			name: cleaned_name
 		};
-		if (source_author_obj.name !== '') {
-			bibnet.insertAuthorship(source_author_obj, target_publication_obj)
+		if (target_author_obj.name !== '') {
+			bibnet.insertAuthorship(source_publication_obj, target_author_obj)
 		}
 	});
 }
@@ -144,6 +142,10 @@ bibnet.parsePublicationItem = function (item_number) {
 	var date			   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_a').text().split('-')[1].slice(-5));
 	var citation_count	   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ri .gs_fl a:first-child').text().split('by ')[1]);
 	var pdf_link 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ggsd a').attr('href'); 
+
+	if (isNaN(citation_count)) { 
+		citation_count = 0
+	} 
 
 	target_publication_obj = { 
 		title: title,
@@ -177,18 +179,20 @@ bibnet.insertCitation = function(source_publication_obj, target_publication_obj)
 
 }
 
-bibnet.insertAuthorship = function(source_author_obj, target_publication_obj) { 
-	
-	var source_author_id = bibnet.insertAuthor(source_author_obj);
-	var target_publication_id = bibnet.insertPublication(target_publication_obj);
+bibnet.insertAuthorship = function(source_publication_obj, target_author_obj) { 
 
-	extant = Edges.findOne({type:'author', source: source_author_id, target: target_publication_id });
+	var source_publication_id = bibnet.insertPublication(source_publication_obj);
+	var target_author_id = bibnet.insertAuthor(target_author_obj);
+
+	var edge_obj = {type:'author', source: source_publication_id, target: target_author_id }
+
+	extant = Edges.findOne(edge_obj);
 
 	if(extant) { 
-		console.log('Authorship edge already in DB  - ' + source_author_obj.name  + ' wrote '  + target_publication_obj.title.slice(0,20))
+		console.log('Authorship edge already in DB  - ' + source_publication_obj.title  + ' written by '  + target_author_obj.name)
 	} else { 
-		console.log('Adding authorship edge - ' + source_author_obj.name  + ' wrote '  + target_publication_obj.title.slice(0,20))
-		Edges.insert({type: 'author', source: source_author_id, target: target_publication_id});
+		console.log('Adding authorship edge - ' + source_publication_obj.title  + ' written by '  + target_author_obj.name)
+		Edges.insert(edge_obj);
 	}
 }
 
