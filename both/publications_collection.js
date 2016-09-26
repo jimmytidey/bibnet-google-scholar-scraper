@@ -20,7 +20,13 @@ PublicationsSchema = new SimpleSchema({
   	"publication_date": {
 	    type: Date,
 	    label: "Publication Date"
-	}   
+	},
+  	"citation_search": {
+	    type: Boolean,
+	    label: "Citation Search", 
+	    defaultValue: false
+	}  	
+
 });
 
 Publications.attachSchema( PublicationsSchema ); 

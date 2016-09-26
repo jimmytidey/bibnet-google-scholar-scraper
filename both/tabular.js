@@ -21,7 +21,8 @@ TabularTables.Publications = new Tabular.Table({
     {data: "pdf_link", title: "PDF Link"},
     {data: "publication_date", title: "Date"},
     {data: "google_cluster_id", title: "Google ID"},
-    {data: "citation_count", title: "Citation Count"}
+    {data: "citation_count", title: "Citation Count"},
+    {data: "citation_search", title: "Citation Search"}
   ]
 });
 
@@ -31,6 +32,6 @@ TabularTables.Edges = new Tabular.Table({
   columns: [
     {data: "type", title: "Title"},
     {data: "source", title: "Source"},
-    {data: "target", title: "Target"},
+    {data: "target", title: "Target"}
   ]
 });
