@@ -7,8 +7,6 @@ Meteor.methods({
 
 		bibnet.list_of_papers = list_of_papers.split(/\n/)
 
-		bibnet.list_of_papers.length = 1;
-
 		bibnet.paperSearchTimer = Meteor.setInterval(function(){
 			
 			if (bibnet.list_of_papers.length > 0) {

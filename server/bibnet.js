@@ -4,7 +4,7 @@ import { request } from "meteor/froatsnook:request";
 bibnet = {}; 
 
 //set up a request object that we can use to get stuff from scholar 
-bibnet.user_agent = 'eMozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36';
+bibnet.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36';
 bibnet.cookie_jar = request.jar();
 
 _.each(bibnet.cookies, function(cookie){
@@ -40,10 +40,10 @@ bibnet.SearchForPublications = function(search_string) {
 
 bibnet.addCitations = function (cite_search_obj) { 
 
-	var html = HTTP.call('GET', cite_search_obj.url, bibnet.headers);
-	$ = cheerio.load(html.contevnt);
+	var result = bibnet.requestWithHeaders.getSync(cite_search_obj.url);
+	$ = cheerio.load(result.body);
+	
 	for(var i=1; i<11; i++) {
-		
 		//try { 
 			bibnet.parseCitation(i, cite_search_obj); 
 		
@@ -61,10 +61,13 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 	var relevant_author_name = $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > div.gs_a b').text(); 
 	if (relevant_author_name === cite_search_obj.author_obj.name) { 
 		
-		console.log('-------->'); 
-		console.log($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_fl a:nth-child(3)').html()); 
+		console.log('--->');
+		console.log(cite_search_obj.url); 
+		console.log('item no: ', item_number); 
+		console.log($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ri .gs_fl').text()); 
+		console.log($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ri .gs_fl a:nth-child(1)').html());
 		var title  			   = $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > h3 > a').text();
-		var cluster 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_fl a:nth-child(3)').attr('href').split('=')[1].split('&')[0];
+		var cluster 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ri .gs_fl a:nth-child(1)').attr('href').split('=')[1].split('&')[0];
 		var date			   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_a').text().split('-')[1].slice(-5));
 		var citation_count	   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_fl a:first-child').text().split('by ')[1]);
 		var pdf_link 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ggsd a').attr('href'); 
@@ -89,23 +92,18 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 
 		source_publication_obj 	= target_publication_obj; 
 		target_publication_obj 	= cite_search_obj.publication_obj; 
-		console.log('source_publication_obj', source_publication_obj); 
-		console.log('target_publication_obj', target_publication_obj); 
-
 		bibnet.insertCitation(source_publication_obj, target_publication_obj); 
 	}
 	else {
 		console.log('Not a relevant citation ' 
-			+  relevant_author_name  + ' citing ' + target_publication_obj.title.slice(0,20)); 
+			+  relevant_author_name  + ' citing ' + cite_search_obj.publication_obj.title.slice(0,20)); 
 	}
 } 
 
 bibnet.parsePublication = function(item_number) { 
 	
-	console.log('-------->'); 
-	console.log($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_fl a:nth-child(3)').html());
 	var title  			   = $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > h3 > a').text();
-	var cluster 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_fl a:nth-child(3)').attr('href').split('=')[1].split('&')[0];
+	var cluster 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ri .gs_fl .gs_ri a:nth-child(1)').attr('href').split('=')[1].split('&')[0];
 	var date			   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_a').text().split('-')[1].slice(-5));
 	var citation_count	   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_fl a:first-child').text().split('by ')[1]);
 	var pdf_link 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ggsd a').attr('href'); 
@@ -135,8 +133,8 @@ bibnet.insertCitation = function(source_publication_obj, target_publication_obj)
 
 	var edge_obj = {
 		type:'cites', 
-		source: source_publication_obj.google_cluster_id, 
-		target: target_publication_obj.google_cluster_id
+		source: source_publication_obj._id, 
+		target: target_publication_obj._id
 	}
 
 	console.log('citation obj', edge_obj); 

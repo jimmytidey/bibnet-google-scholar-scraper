@@ -19,5 +19,13 @@ Template.body.events({
 		event.preventDefault();
 		console.log('removing citations');
 		Meteor.call('removeCitations');
-	}
+	}, 
+	'click .generate-dot-file'(event)  {
+		event.preventDefault();
+		console.log('generating dot file');
+		Meteor.call('generateDotFile', function(err, dotFile){ 
+			console.log('dot file returned');
+			$('.dot-file').val(dotFile);
+		});
+	}, 
 });

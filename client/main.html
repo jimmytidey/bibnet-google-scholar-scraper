@@ -16,22 +16,39 @@
 				{{> tabular table=TabularTables.Edges class="table table-striped table-bordered table-condensed"}}
 			</div>
 		</div>
+		
+		{{> output }}
+	
 	</div>
+	
 </body>
 
 
 <template name="inputPapers">
 	<br/> 
 	<div class='row'> 
-		<div class='col-md-6'>
+		<div class='col-md-10'>
 			<textarea class='list-of-papers' ></textarea>
 		</div>  
 
-		<div class='col-md-6'>
+		<div class='col-md-2'>
 			<button type="button" class="btn btn-default find-papers">Find papers</button>
 			<button type="button" class="btn btn-default add-citations">Add Citations</button>
 			<button type="button" class="btn btn-default remove-citations">Remove Citations</button>
+			<button type="button" class="btn btn-default generate-dot-file">Generate .dot file</button>
 		</div>    
+	</div>
+	<br/>
+</template>
+
+<template name="output">
+
+	<h3>Output</h3>
+	<br/> 
+	<div class='row'> 
+		<div class='col-md-12'>
+			<textarea class='dot-file' ></textarea>
+		</div>  
 	</div>
 	<br/>
 </template>
