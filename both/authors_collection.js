@@ -19,7 +19,12 @@ AuthorsSchema = new SimpleSchema({
     type: String,
     label: "target",
     optional:true,    
-  }  
+  },
+  "is_first_level": { 
+    type: Boolean,
+    label: 'Is First Level?', 
+    defaultValue: false
+  }
 });
 
 Authors.attachSchema( AuthorsSchema ); 

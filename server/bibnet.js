@@ -36,7 +36,7 @@ bibnet.SearchForPublications = function(search_string) {
 }
 
 bibnet.addCitations = function (cite_search_obj) { 
-
+	console.log('cite_search_obj',cite_search_obj);
 	var result = bibnet.requestWithHeaders.getSync(cite_search_obj.url);
 
 	console.log(cite_search_obj.url);
@@ -45,6 +45,10 @@ bibnet.addCitations = function (cite_search_obj) {
 	
 	var number_of_results = $('#gs_ccl_results > div').length; 
 
+
+	if(bibnet.isRateLimited) {
+		Edges.insert({type:'citation_checked', source:cite_search_obj.publication_obj._id, target: cite_search_obj.author_obj._id});
+	}
 	for(var i=1; i<=number_of_results; i++) {
 		bibnet.parseCitation(i, cite_search_obj); 
 	}
@@ -87,9 +91,13 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 		var author_string 		= $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > div.gs_a ').text().split('-')[0];
 		var author_array 	   	= author_string.split(','); 
 
-		_.each(author_array, function(val, key){ 
+		_.each(author_array, function(val, key){
+
+		var cleaned_name = val.replace('…', '')
+		cleaned_name = cleaned_name.trim()
+
 			source_author_obj = { 
-				name: val.trim().replace(/\./g,'')
+				name: cleaned_name
 			}   
 			bibnet.insertAuthorship(target_publication_obj, source_author_obj)
 		});
@@ -104,8 +112,6 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 			+  author_names  + ' citing ' + cite_search_obj.publication_obj.title.slice(0,50)); 
 		console.log('does not contain: ', cite_search_obj.author_obj.name)
 	}
-
-	Edges.insert({type:'citation_checked', source:cite_search_obj.publication_obj._id, target: cite_search_obj.author_obj._id});
 } 
 
 bibnet.parsePublication = function(item_number) { 
@@ -116,19 +122,20 @@ bibnet.parsePublication = function(item_number) {
 	} 
 	
 	source_publication_obj = bibnet.parsePublicationItem(item_number);
-
+	source_publication_obj.is_first_level = true;
+	
 	var author_string 		= $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > div.gs_a ').text().split('-')[0];
 	var author_array 	   	= author_string.split(','); 
 
 	_.each(author_array, function(val, key){ 
-		console.log('wft1? ', val);
-		
+			
 		var cleaned_name = val.replace('…', '')
 		cleaned_name = cleaned_name.trim()
 		target_author_obj = { 
-			name: cleaned_name
+			name: cleaned_name,
+			is_first_level: true
 		};
-		console.log('wft2? ', cleaned_name);
+
 
 		if (target_author_obj.name !== '') {
 			bibnet.insertAuthorship(source_publication_obj, target_author_obj)
