@@ -4,11 +4,11 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import './main.html';
 
 Template.body.events({
-	'click .find-papers'(event) {
+	'click .find-publication'(event) {
 		event.preventDefault();
-		console.log('finding papers');
+		console.log('finding publications');
 		var list_of_papers = $('.list-of-papers').val();
-		Meteor.call('findPapers', list_of_papers);
+		Meteor.call('findPublications', list_of_papers);
 	},
 	'click .add-citations'(event) {
 		event.preventDefault();
@@ -28,4 +28,12 @@ Template.body.events({
 			$('.dot-file').val(dotFile);
 		});
 	}, 
+});
+
+Template.deletePublication.events({
+  'click .delete-publication': function () {
+	event.preventDefault();
+	console.log('delete publication ' + this._id);
+	Meteor.call('deletePublication', this._id);  	
+  }
 });

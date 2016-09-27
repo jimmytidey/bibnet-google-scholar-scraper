@@ -32,7 +32,7 @@
 		</div>  
 
 		<div class='col-md-2'>
-			<button type="button" class="btn btn-default find-papers">Find papers</button>
+			<button type="button" class="btn btn-default find-publication">Find papers</button>
 			<button type="button" class="btn btn-default add-citations">Add Citations</button>
 			<button type="button" class="btn btn-default remove-citations">Remove Citations</button>
 			<button type="button" class="btn btn-default generate-dot-file">Generate .dot file</button>
@@ -52,3 +52,9 @@
 	</div>
 	<br/>
 </template>
+
+<template name="deletePublication">
+	<button type="button" data-id="{{ this._id }}" class="btn btn-default delete-publication">Delete</button>
+</template>
+
+

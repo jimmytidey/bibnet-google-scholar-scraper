@@ -8,17 +8,10 @@ bibnet.SearchForPublications = function(search_string) {
 	var url  = "https://scholar.google.co.uk/scholar?hl=en&as_sdt=1,5&as_vis=1&q=" + search_string;
 	console.log('url:  ', url );
 	var html = HTTP.call('GET',url, bibnet.headers);
-	$ = cheerio.load(html.content);
 	
+	$ = cheerio.load(html.content);
 	for(var i=1; i<11; i++) {
-		
-		try { 
-			bibnet.parsePublication(i); 
-		
-		} catch(err) {
-			console.log('--------- Google may have rate limited you ----------')
-			console.log(err)
-		}
+		bibnet.parsePublication(i); 
 	}
 }
 
@@ -26,15 +19,9 @@ bibnet.addCitations = function (cite_search_obj) {
 
 	var html = HTTP.call('GET', cite_search_obj.url, bibnet.headers);
 	$ = cheerio.load(html.content);
+	
 	for(var i=1; i<11; i++) {
-		
-		//try { 
-			bibnet.parseCitation(i, cite_search_obj); 
-		
-		//} catch(err) {
-		//	console.log('--------- Google may have rate limited you ----------')
-		//	console.log(err)
-		//}
+		bibnet.parseCitation(i, cite_search_obj); 
 	}
 
 }
@@ -75,7 +62,7 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 		target_publication_obj 	= cite_search_obj.publication_obj; 
 		console.log('source_publication_obj', source_publication_obj); 
 		console.log('target_publication_obj', target_publication_obj); 
-
+		
 		bibnet.insertCitation(source_publication_obj, target_publication_obj); 
 	}
 	else {
