@@ -20,10 +20,10 @@ AuthorsSchema = new SimpleSchema({
     label: "target",
     optional:true,    
   },
-  "is_first_level": { 
-    type: Boolean,
-    label: 'Is First Level?', 
-    defaultValue: false
+  "distance": { 
+    type: Number,
+    label: 'Distance', 
+    defaultValue: 20
   }
 });
 

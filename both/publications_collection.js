@@ -21,10 +21,10 @@ PublicationsSchema = new SimpleSchema({
 	    type: Date,
 	    label: "Publication Date"
 	},
-	"is_first_level": { 
-		type: Boolean,
-		label: 'Is First Level?',
-		defaultValue: false
+	"distance": { 
+		type: Number,
+		label: 'Distance',
+		defaultValue: 20
 	}
 });
 Publications.attachSchema( PublicationsSchema ); 

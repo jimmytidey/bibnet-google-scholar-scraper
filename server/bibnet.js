@@ -3,26 +3,51 @@ import { request } from "meteor/froatsnook:request";
 
 bibnet = {}; 
 
-//set up a request object that we can use to get stuff from scholar 
-bibnet.user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36';
-bibnet.cookie_jar = request.jar();
 
-_.each(bibnet.cookies, function(cookie){
-	console.log(cookie);
-	var cookie = request.cookie(cookie);
-	bibnet.cookie_jar.setCookie(cookie, 'https://scholar.google.co.uk');
-})
+bibnet.setupRequest =function() {
+	var connection; 
+	//set up a request object that we can use to get stuff from scholar 
+	bibnet.user_agents = [
+		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
+		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36',
+		'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.32 (KHTML, like Gecko) Chrome/27.0.1421.0 Safari/537.32',
+		'Mozilla/5.0 (Windows NT 6.1; rv:11.0) Gecko/20100101 Firefox/11.0',
+		'Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1'
+	]
 
-bibnet.requestWithHeaders = request.defaults({
-	headers: { "User-Agent": bibnet.user_agent },
-	jar:bibnet.cookie_jar
-});
+	if(Math.random() > 1) { 
+		console.log('request with cookies');
+
+		bibnet.cookie_jar = request.jar();
+
+		_.each(bibnet.cookies, function(cookie){
+			console.log(cookie);
+			var cookie = request.cookie(cookie);
+			bibnet.cookie_jar.setCookie(cookie, 'https://scholar.google.co.uk');
+		})
+
+		connection = request.defaults({
+			//headers: { "User-Agent": _.sample(bibnet.user_agents) },
+			jar:bibnet.cookie_jar
+		});
+	} else { 
+		console.log('request without cookies');
+
+		connection = request.defaults({
+			headers: { "User-Agent": _.sample(bibnet.user_agents) }
+		});
+	}
+
+	return connection;
+}
 
 bibnet.SearchForPublications = function(search_string) { 
 	var url  = "https://scholar.google.co.uk/scholar?hl=en&as_sdt=1,5&as_vis=1&q=" + search_string;
 	console.log('url:  ', url );
 	
-	var result = bibnet.requestWithHeaders.getSync(url);
+	var connection = bibnet.setupRequest(); 
+	var result = connection.getSync(url);
 	
 	$ = cheerio.load(result.body);
 	
@@ -36,17 +61,19 @@ bibnet.SearchForPublications = function(search_string) {
 }
 
 bibnet.addCitations = function (cite_search_obj) { 
-	console.log('cite_search_obj',cite_search_obj);
-	var result = bibnet.requestWithHeaders.getSync(cite_search_obj.url);
+	
+	var connection = bibnet.setupRequest(); 
+	var result = connection.getSync(cite_search_obj.url);
 
 	console.log(cite_search_obj.url);
 
 	$ = cheerio.load(result.body);
 	
 	var number_of_results = $('#gs_ccl_results > div').length; 
+	console.log('number_of_results ------------------------------->', number_of_results); 
 
 
-	if(bibnet.isRateLimited) {
+	if(bibnet.isRateLimited && number_of_results>0 ) {
 		Edges.insert({type:'citation_checked', source:cite_search_obj.publication_obj._id, target: cite_search_obj.author_obj._id});
 	}
 	for(var i=1; i<=number_of_results; i++) {
@@ -87,8 +114,11 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 	if (!bibnet.isAuthorListing(item_number)) { 
 		
 		target_publication_obj = bibnet.parsePublicationItem(item_number);
+		target_publication_obj.distance = item_number + 20;
 
 		var author_string 		= $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > div.gs_a ').text().split('-')[0];
+		
+		
 		var author_array 	   	= author_string.split(','); 
 
 		_.each(author_array, function(val, key){
@@ -97,9 +127,12 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 		cleaned_name = cleaned_name.trim()
 
 			source_author_obj = { 
-				name: cleaned_name
-			}   
-			bibnet.insertAuthorship(target_publication_obj, source_author_obj)
+				name: cleaned_name,
+				distance: item_number + 20
+			}
+			if (source_author_obj.name !== '') {
+				bibnet.insertAuthorship(target_publication_obj, source_author_obj)
+			}
 		});
 
 		source_publication_obj 	= Publications.findOne({google_cluster_id: target_publication_obj.google_cluster_id}); 
@@ -122,8 +155,8 @@ bibnet.parsePublication = function(item_number) {
 	} 
 	
 	source_publication_obj = bibnet.parsePublicationItem(item_number);
-	source_publication_obj.is_first_level = true;
-	
+	source_publication_obj.distance = item_number;
+
 	var author_string 		= $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > div.gs_a ').text().split('-')[0];
 	var author_array 	   	= author_string.split(','); 
 
@@ -133,10 +166,9 @@ bibnet.parsePublication = function(item_number) {
 		cleaned_name = cleaned_name.trim()
 		target_author_obj = { 
 			name: cleaned_name,
-			is_first_level: true
+			distance: item_number
 		};
-
-
+		
 		if (target_author_obj.name !== '') {
 			bibnet.insertAuthorship(source_publication_obj, target_author_obj)
 		}
@@ -186,7 +218,7 @@ bibnet.insertCitation = function(source_publication_obj, target_publication_obj)
 	if(extant) { 
 		console.log('Already in DB  - ' + source_publication_obj.title.slice(0,30)  + ' \n cites '  + target_publication_obj.title.slice(0,20))
 	} else { 
-		console.log('Adding citationz  - ' + source_publication_obj.title.slice(0,30)  + ' \n cites '  + target_publication_obj.title.slice(0,20))
+		console.log('Adding citation  - ' + source_publication_obj.title.slice(0,30)  + ' \n cites '  + target_publication_obj.title.slice(0,20))
 		Edges.insert(edge_obj);
 	}
 

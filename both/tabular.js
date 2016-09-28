@@ -9,7 +9,7 @@ TabularTables.Authors = new Tabular.Table({
     {data: "google_author_id", title: "Google Author ID"},
     {data: "tags", title: "Tags"},
     {data: "institution", title: "Institution"},
-    {data: "is_first_level", title: "First Level"}
+    {data: "distance", title: "Distance"}
   ]
 });
 
@@ -23,7 +23,7 @@ TabularTables.Publications = new Tabular.Table({
     {data: "publication_date", title: "Date"},
     {data: "google_cluster_id", title: "Google ID"},
     {data: "citation_count", title: "Citation Count"},
-    {data: "is_first_level", title: "First Level"},
+    {data: "distance", title: "Distance"},
     {
       data: '_id',
       title: "Delete",
