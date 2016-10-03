@@ -28,14 +28,14 @@ bibnet.setupRequest =function() {
 		})
 
 		connection = request.defaults({
-			//headers: { "User-Agent": _.sample(bibnet.user_agents) },
+			headers: { "User-Agent": _.sample(bibnet.user_agents) },
 			jar:bibnet.cookie_jar
 		});
 	} else { 
 		console.log('request without cookies');
 
 		connection = request.defaults({
-			headers: { "User-Agent": _.sample(bibnet.user_agents) }
+		
 		});
 	}
 
@@ -75,7 +75,9 @@ bibnet.addCitations = function (cite_search_obj) {
 	var number_of_results = $('#gs_ccl_results > div').length; 
 	console.log('number_of_results ------------------->', number_of_results); 
 
-	
+	if(number_of_results ==0) { 
+		//console.log($('body').html().substring(0,3000));
+	}
 
 
 	for(var i=1; i<=number_of_results; i++) {
@@ -89,7 +91,9 @@ bibnet.addCitations = function (cite_search_obj) {
 }
 
 bibnet.isRateLimited = function() { 
-	if ($('#gs_captcha_f').length > 0) {
+	if ($('#gs_captcha_f').length > 0 || $('#captcha').length > 0 ) {
+		Meteor.clearInterval(bibnet.addCitationsTimer);
+		Meteor.clearInterval(bibnet.paperSearchTimer);
 		console.log('Google hates you'); 
 		console.log($('#gs_captcha_f').html());
 		return true 
@@ -188,7 +192,7 @@ bibnet.parsePublicationItem = function (item_number) {
 	}
 	try {
 		var title  			   = $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri h3  a').text();
-		var cluster 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri .gs_fl  a:nth-child(1)').attr('href').split('=')[1].split('&')[0];
+		var cluster 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri .gs_fl  a:nth-child(1)').attr('href');
 		var date			   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_a').text().split('-')[1].slice(-5));
 		var citation_count	   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ri .gs_fl a:first-child').text().split('by ')[1]);
 		var pdf_link 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ggsd a').attr('href'); 
@@ -205,6 +209,19 @@ bibnet.parsePublicationItem = function (item_number) {
 	if (isNaN(citation_count)) { 
 		citation_count = 0
 	} 
+
+	//sometimes a cluster id appears simply not to exist 
+
+	console.log('WTF?', cluster.search("="));
+	if(typeof cluster == 'undefined' || cluster === 'undefined' || cluster.search("=") ==-1) { 
+		console.log('!!!!!!!!!!!!!!!!!!!!!!!!!'); 
+		console.log('setting cluster to zero'); 
+		culster = 0; 
+	} else {
+		cluster = cluster.split('=')[1].split('&')[0]
+	}
+
+	console.log('cluster_id: ',cluster );
 
 	target_publication_obj = { 
 		title: title,

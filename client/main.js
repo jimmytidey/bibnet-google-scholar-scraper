@@ -28,7 +28,17 @@ Template.body.events({
 			$('.dot-file').val(dotFile);
 		});
 	}, 
+	'click .generate-cocitation-dot-file'(event)  {
+		event.preventDefault();
+		console.log('generating cocitation dot file');
+		Meteor.call('generateCocitationDotFile', function(err, dotFile){ 
+			console.log('dot file returned');
+			$('.dot-file').val(dotFile);
+		});
+	}, 	
 });
+
+
 
 Template.deletePublication.events({
   'click .delete-publication': function () {
