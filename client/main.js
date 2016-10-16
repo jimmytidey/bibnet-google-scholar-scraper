@@ -7,8 +7,8 @@ Template.body.events({
 	'click .find-publication'(event) {
 		event.preventDefault();
 		console.log('finding publications');
-		var list_of_papers = $('.list-of-papers').val();
-		Meteor.call('findPublications', list_of_papers);
+		var search_string = $('.publication_string').val();
+		Meteor.parsePublications.searchPublications(search_string);
 	},
 	'click .add-citations'(event) {
 		event.preventDefault();
