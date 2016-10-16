@@ -42,7 +42,7 @@ Meteor.methods({
 
 		//list of all authors 
 		Authors.find().forEach(function(val){ 
-			var author_string = val._id + ' ' + '[label="'+val.name+'", type="author" , google_author_id="'+val.google_author_id +'", tags="'+val.tags+'", institution="'+val.institution+'"]\n';  
+			var author_string = val._id + ' ' + '[label="'+val.name+'", distance="'+val.distance+'", type="author" , google_author_id="'+val.google_author_id +'", tags="'+val.tags+'", institution="'+val.institution+'"]\n';  
 			nodes.push(author_string); 
 		});
 

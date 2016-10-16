@@ -1,0 +1,21 @@
+{
+  "name": "Bibnets",
+  "version": "0.1",
+  "description": "A browser extension to help bibnet.io",
+  "browser_action": {
+      "default_title": "Bibnets"
+  },
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' https://example.com; object-src 'self'",
+  "content_scripts": [
+    {
+      "matches": ["http://localhost/*"],
+      "js": ["content_script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+ "background": {
+    "scripts": ["event_script.js"],
+    "persistent": false
+  }
+}
