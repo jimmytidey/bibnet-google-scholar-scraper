@@ -1,19 +1,26 @@
 
-
 window.addEventListener('message', function(event) {
- 	
-	console.log(event);
-
  	if(event.data.indexOf("scholar.google")>-1) {
- 
- 		chrome.runtime.sendMessage({url: event.data}, function(response) {
-		  console.log(response.farewell);
-		});
+ 		
+ 		console.log('content script called with url: ', event.data); 
+		
+ 		var xhr = new XMLHttpRequest();
+
+		xhr.open("GET", event.data, true);
+		
+		xhr.onreadystatechange = function() {
+		  if (xhr.readyState == 4) {
+		    console.log('event script did xhr request');
+		    console.log(xhr);
+		    window.postMessage(xhr.responseText, "http://localhost:3000");
+		  }
+		}
+		
+		xhr.send();	 		
+ 		
+
 	}
-
 }, false);
-
-
 
 
 /* allow normal js to see that the plugin is installed */ 
