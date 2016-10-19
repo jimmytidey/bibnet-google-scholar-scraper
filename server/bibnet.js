@@ -6,17 +6,10 @@ bibnet = {};
 
 bibnet.setupRequest =function() {
 	var connection; 
-	//set up a request object that we can use to get stuff from scholar 
-	bibnet.user_agents = [
-		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
-		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36',
-		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36',
-		'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.32 (KHTML, like Gecko) Chrome/27.0.1421.0 Safari/537.32',
-		'Mozilla/5.0 (Windows NT 6.1; rv:11.0) Gecko/20100101 Firefox/11.0',
-		'Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1'
-	]
 
-	if(Math.random() > 1) { 
+	var use_cookies = false;
+
+	if(use_cookies) { 
 		console.log('request with cookies');
 
 		bibnet.cookie_jar = request.jar();
@@ -26,17 +19,12 @@ bibnet.setupRequest =function() {
 			var cookie = request.cookie(cookie);
 			bibnet.cookie_jar.setCookie(cookie, 'https://scholar.google.co.uk');
 		})
-
 		connection = request.defaults({
-			headers: { "User-Agent": _.sample(bibnet.user_agents) },
 			jar:bibnet.cookie_jar
 		});
 	} else { 
 		console.log('request without cookies');
-
-		connection = request.defaults({
-		
-		});
+		connection = request.defaults();
 	}
 
 	return connection;

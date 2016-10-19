@@ -21,3 +21,6 @@ textarea {
   hyphens: auto;
 }
 
+ul.notifications {
+  position: fixed;
+}
