@@ -38,7 +38,13 @@ Template.body.events({
 	}, 	
 });
 
-
+Template.publicationDate.helpers({
+  'cleanDate': function (val) {
+		var date_obj  = new Date(val); 
+		return  val.getFullYear();
+  }
+});
+ 
 
 Template.deletePublication.events({
   'click .delete-publication': function () {

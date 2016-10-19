@@ -18,11 +18,32 @@ window.addEventListener('message', function(event) {
 		}
 
 		else { 
-			Meteor.parsePublications.displayPublication(response);
-		}
+			
+			Meteor.chrome_extension_xhr.determineType(remote_dom)
+			
+		}	
 
 	}
 });
 
+Meteor.chrome_extension_xhr.determineType = function(remote_dom){ 
+
+	var remote_dom = jQuery.parseHTML( remote_dom );
+	//error page, cition search page, or publication search page? 
+	var is_rate_limited_1 	= $(remote_dom).find('#gs_captcha_f');
+	var is_rate_limited_2 	= $(remote_dom).find('#captcha');
+	var is_citation_page  	= $(remote_dom).find('.gs_rt_hdr');
+
+	if(is_rate_limited_1.length > 0 || is_rate_limited_2.length > 0) { 
+		Notifications.error('Error Accessing Google Scholar', 'You have been rate limited');
+		return false 
+	}
+ 	
+ 	if(is_citation_page.length > 0) { 
+ 		console.log('this is a citation page'); 
+ 	} else { 
+ 		Meteor.call('parsePublicationHTML', remote_dom); 
+ 	}	
+}
 
 

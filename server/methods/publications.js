@@ -24,6 +24,8 @@ Meteor.methods({
 	},
 	deletePublication: function(publication_id) { 
 
+		console.log('deletePublication called');
+		
 		Edges.find({type:'author', source:publication_id}).forEach(function(edge_doc){ 
 			
 			var other_pubs_with_this_author = Edges.find({type:'author', source: {$ne: publication_id}, target: edge_doc.target }).fetch(); 
@@ -44,6 +46,11 @@ Meteor.methods({
 		Edges.remove({type:'author', source:publication_id});
 
 		Publications.remove({_id: publication_id});
-
-	}
+		 
+	},
+	parsePublicationHTML: function(html) { 
+		bibnet.parsePublicationHTML(html) 
+	}	
 });
+
+

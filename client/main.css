@@ -1,6 +1,6 @@
 textarea { 
-  width:100%;
-  height: 70px;
+  width:80%;
+  height: 2em;
 } 
 
  .tables td {
@@ -23,4 +23,46 @@ textarea {
 
 ul.notifications {
   position: fixed;
+}
+
+
+/*making tables work reasonable */ 
+.author-table .col-sm-5, .author-table .col-sm-7 { 
+  width:100%;
+  float:left;
+}
+.author-table .dataTables_paginate { 
+  text-align: left!important;
+}
+
+table.dataTable.table-condensed > thead > tr > th {
+    padding-right: 7px;
+}
+
+#DataTables_Table_1 > thead > tr > th:nth-child(2) { 
+  width:25px!important;
+ }
+
+#DataTables_Table_1 > thead > tr > th:nth-child(3) { 
+  width:25px!important;
+} 
+
+#DataTables_Table_1 > thead > tr > th:nth-child(4) { 
+  width:25px!important;
+} 
+
+#DataTables_Table_1 > thead > tr > th:nth-child(5) { 
+  width:25px!important;
+} 
+
+#DataTables_Table_0_length > label > select { 
+  width:45px;
+}
+
+#DataTables_Table_1_filter > label > input { 
+  width:100px;
+ }
+
+.pagination > li > a { 
+  padding:6px 8px;
 }

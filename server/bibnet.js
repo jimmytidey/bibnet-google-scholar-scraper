@@ -36,8 +36,12 @@ bibnet.SearchForPublications = function(search_string) {
 	
 	var connection = bibnet.setupRequest(); 
 	var result = connection.getSync(url);
-	
-	$ = cheerio.load(result.body);
+	bibnet.parsePublicationHTML(result.body);
+
+}
+
+bibnet.parsePublicationHTML = function(html) { 
+	$ = cheerio.load(html);
 	
 	var number_of_results = $('#gs_ccl_results > div').length;  
 	console.log('number_of_results ', number_of_results); 
@@ -47,7 +51,6 @@ bibnet.SearchForPublications = function(search_string) {
 		bibnet.parsePublication(i); 
 	}
 }
-
 bibnet.addCitations = function (cite_search_obj) { 
 	
 	var connection = bibnet.setupRequest(); 

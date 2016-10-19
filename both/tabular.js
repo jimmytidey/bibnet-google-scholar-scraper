@@ -5,11 +5,6 @@ TabularTables.Authors = new Tabular.Table({
   collection: Authors,
   columns: [
     {data: "name", title: "Name"},
-    {data: "_id", title: "ID"},
-    {data: "google_author_id", title: "Google Author ID"},
-    {data: "tags", title: "Tags"},
-    {data: "institution", title: "Institution"},
-    {data: "distance", title: "Distance"}
   ]
 });
 
@@ -17,13 +12,18 @@ TabularTables.Publications = new Tabular.Table({
   name: "Publications",
   collection: Publications,
   columns: [
-    {data: "title", title: "Title"},
-    {data: "_id", title: "ID"},
-    {data: "pdf_link", title: "PDF Link"},
-    {data: "publication_date", title: "Date"},
-    {data: "google_cluster_id", title: "Google ID"},
-    {data: "citation_count", title: "Citation Count"},
-    {data: "distance", title: "Distance"},
+    {data: "title", title: "Title of publication"},
+    {
+      data: 'pdf_link',
+      title: "PDF",
+      tmpl: Meteor.isClient && Template.pdfLink
+    },    
+    {
+      data: 'publication_date',
+      title: "Date",
+      tmpl: Meteor.isClient && Template.publicationDate
+    },
+    {data: "citation_count", title: "Citations"},
     {
       data: '_id',
       title: "Delete",
