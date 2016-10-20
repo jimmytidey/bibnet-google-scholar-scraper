@@ -51,6 +51,7 @@ bibnet.parsePublicationHTML = function(html) {
 		bibnet.parsePublication(i); 
 	}
 }
+
 bibnet.addCitations = function (cite_search_obj) { 
 	
 	var connection = bibnet.setupRequest(); 

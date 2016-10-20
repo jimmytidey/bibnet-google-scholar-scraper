@@ -18,6 +18,8 @@
 						<button class="btn btn-secondary find-publication" type="button">Go!</button>
 					</span>
 				</div>
+
+				{{> publicationSearchResults }}
 			</div>
 
 			<div class='col-md-4 tables '>
@@ -82,6 +84,34 @@
 
 <template name="pdfLink">
 	<a href='{{this.pdf_link}}'>Link</a>
+</template>
+
+
+<template name='publicationSearchResults'>
+	<table class="table"> 
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Authors</th>
+				<th>Date</th>
+				<th>Citation Count</th>
+				<th>Remove</th>
+				<th>Add</th>
+			</tr>
+		</thead>
+		<tbody>
+		{{#each searchResults}}
+			<tr data-search-result-id='{{this._id}}'>
+				<td class='search-result-title'  >{{this.title}}</td>
+				<td class='search-result-authors' >{{this.authors}}</td>
+				<td class='search-result-authors'>{{ cleanDate publication_date}}</td>
+				<td>{{this.citation_count}}</td>
+				<td><button class='remove-search-result btn btn-danger'>Remove</button></td>
+				<td><button class='add-search-result btn btn-success'>Add</button></td>
+			</tr>
+		{{/each}}
+		</tbody>
+	</table>
 </template>
 
 

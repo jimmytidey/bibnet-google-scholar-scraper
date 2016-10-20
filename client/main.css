@@ -25,6 +25,9 @@ ul.notifications {
   position: fixed;
 }
 
+.search-result-title, .search-result-authors { 
+  width:30%;
+} 
 
 /*making tables work reasonable */ 
 .author-table .col-sm-5, .author-table .col-sm-7 { 

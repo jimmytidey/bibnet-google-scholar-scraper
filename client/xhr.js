@@ -19,7 +19,7 @@ window.addEventListener('message', function(event) {
 
 		else { 
 			
-			Meteor.chrome_extension_xhr.determineType(remote_dom)
+			Meteor.chrome_extension_xhr.determineType(response)
 			
 		}	
 
@@ -42,7 +42,7 @@ Meteor.chrome_extension_xhr.determineType = function(remote_dom){
  	if(is_citation_page.length > 0) { 
  		console.log('this is a citation page'); 
  	} else { 
- 		Meteor.call('parsePublicationHTML', remote_dom); 
+ 		Meteor.parsePublications.showResults(remote_dom);
  	}	
 }
 

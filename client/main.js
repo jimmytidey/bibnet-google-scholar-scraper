@@ -38,14 +38,32 @@ Template.body.events({
 	}, 	
 });
 
-Template.publicationDate.helpers({
-  'cleanDate': function (val) {
+Template.registerHelper(
+	'cleanDate', function (val) {
 		var date_obj  = new Date(val); 
 		return  val.getFullYear();
-  }
+	}
+);
+
+Template.publicationSearchResults.helpers({
+	'searchResults': function (val) {
+		return  PublicationsSearchResults.find();
+	}
+});
+
+Template.publicationSearchResults.events({
+  'click .remove-search-result': function () {
+	event.preventDefault();
+	console.log('delete publication from results ' + this._id);
+	 PublicationsSearchResults.remove({_id: this._id})
+  },
+  'click .add-search-result': function () {
+	event.preventDefault();
+	console.log('add publication from results ' + this._id);
+	
+  }  
 });
  
-
 Template.deletePublication.events({
   'click .delete-publication': function () {
 	event.preventDefault();
