@@ -29,6 +29,11 @@ PublicationsSearchResultsSchema = new SimpleSchema({
 	"authors": { 
 		type: String,
 		label: 'Authors'
-	}	
+	},
+	"removed": { 
+		type: Boolean,
+		label: 'Removed',
+		defaultValue: false
+	}
 });
 PublicationsSearchResults.attachSchema( PublicationsSearchResultsSchema ); 

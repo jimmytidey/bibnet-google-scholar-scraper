@@ -35,7 +35,13 @@ Template.body.events({
 			console.log('dot file returned');
 			$('.dot-file').val(dotFile);
 		});
-	}, 	
+	},
+	'click .logout': function(){
+		console.log('logging out'); 
+		Meteor.logout(function(){ 
+			Modal.show('loginModal');
+		});
+	} 	
 });
 
 Template.registerHelper(
@@ -47,7 +53,7 @@ Template.registerHelper(
 
 Template.publicationSearchResults.helpers({
 	'searchResults': function (val) {
-		return  PublicationsSearchResults.find();
+		return  PublicationsSearchResults.find({removed:false});
 	}
 });
 
@@ -55,13 +61,30 @@ Template.publicationSearchResults.events({
   'click .remove-search-result': function () {
 	event.preventDefault();
 	console.log('delete publication from results ' + this._id);
-	 PublicationsSearchResults.remove({_id: this._id})
+	PublicationsSearchResults.update({_id: this._id}, {removed:true})
   },
   'click .add-search-result': function () {
 	event.preventDefault();
-	console.log('add publication from results ' + this._id);
-	
-  }  
+	var search_res_id = this._id
+	var search_result = PublicationsSearchResults.findOne({_id: search_res_id}); 
+
+	console.log(search_result);
+
+	Meteor.call('addSearchResult', search_result, function(err,res){ 
+		console.log(res);
+		if(err){ 
+			Notifications.error('Error:', err);
+		}
+		if(res ==='added') { 
+			Notifications.success('Added');
+			PublicationsSearchResults.update({_id: search_res_id}, {removed:true})
+		} 
+		if(res ==='duplicate') {  
+			Notifications.success('Already in');
+			PublicationsSearchResults.update({_id: search_res_id}, {removed:true})
+		}
+	});
+  } 
 });
  
 Template.deletePublication.events({
@@ -71,3 +94,22 @@ Template.deletePublication.events({
 	Meteor.call('deletePublication', this._id);  	
   }
 });
+
+Template.body.onRendered(function () {
+	if(!Meteor.userId()) {
+		Modal.show('loginModal');
+	}
+});
+
+
+Accounts.onLogout(function() {
+	Modal.show('loginModal');
+});
+
+
+Accounts.onLogin(function() {
+	Modal.hide('loginModal');
+});
+
+
+

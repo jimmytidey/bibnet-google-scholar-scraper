@@ -5,7 +5,15 @@
 <body>
   {{> notifications}}
   <div class='container'> 
-  		<h1>BibNet</h1>
+
+		<div class='row'>   		
+			<div class='col-md-11'>  		
+  				<h1>BibNet</h1>
+  			</div>
+			<div class='col-md-1'>  		
+  				<button type="button" class="btn btn-default logout">logout</button>
+  			</div>  			
+  		</div>
 
   		<div class='row'>   		
 			
@@ -112,6 +120,30 @@
 		{{/each}}
 		</tbody>
 	</table>
+</template>
+
+<template name="loginModal">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            	<div class='row'>
+            		<div class='col-md-4 col-md-offset-4'>
+            			<h2>Bibnets</h2>
+            		</div>
+            	</div>
+
+            	<div class='row'>
+     				<div class='col-md-6'>
+     					{{> atForm}}
+     				</div>
+     				<div class='col-md-6'>
+     					<h3>You'll be needing the chrome plugin too.</h3>
+     				</div>
+     			</div>
+
+            </div>
+        </div>
+    </div>
 </template>
 
 

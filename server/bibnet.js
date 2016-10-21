@@ -255,11 +255,15 @@ bibnet.insertAuthorship = function(source_publication_obj, target_author_obj) {
 	extant = Edges.findOne(edge_obj);
 
 	if(extant) { 
+		var created = false; 
 		//console.log('Authorship edge already in DB  - ' + source_publication_obj.title  + ' written by '  + target_author_obj.name)
 	} else { 
 		console.log('Adding authorship edge - ' + source_publication_obj.title  + ' written by '  + target_author_obj.name)
 		Edges.insert(edge_obj);
+		var created = true; 
 	}
+
+	return created;
 }
 
 bibnet.insertPublication = function(publication_obj) { 
@@ -268,7 +272,7 @@ bibnet.insertPublication = function(publication_obj) {
 	if(extant) { 
 		//console.log('Publication already in DB: ')
 		//console.log(publication_obj.title.slice(0,40))
-		return extant._id 
+		return extant._id
 	}
 	else {
 		console.log('Adding publication to DB: ')

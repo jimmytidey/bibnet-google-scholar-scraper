@@ -10,9 +10,11 @@ Meteor.parsePublications.searchPublications = function(search_string) {
 Meteor.parsePublications.showResults = function(remote_dom) { 
 
 	$(remote_dom).find('#gs_ccl_results > div').each(function(index){ 
-		console.log('item_number', item_number);
+		
 
 		var item_number = index + 1;
+
+		console.log('item_number', item_number);
 
 		if($(remote_dom).find('#gs_ccl_results > div:nth-child(' + item_number + ') img ').length > 0) { 
 			console.log('this is an author listing ')
@@ -54,7 +56,8 @@ Meteor.parsePublications.showResults = function(remote_dom) {
 			publication_date: new Date(date+'-01-01'),
 			citation_count: citation_count,
 			pdf_link: pdf_link,
-			authors: authors
+			authors: authors,
+			removed: false
 		};
 
 		PublicationsSearchResults.insert(publication_obj);	

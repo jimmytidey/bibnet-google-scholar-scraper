@@ -50,7 +50,44 @@ Meteor.methods({
 	},
 	parsePublicationHTML: function(html) { 
 		bibnet.parsePublicationHTML(html) 
-	}	
+	}, 
+
+	addSearchResult: function(search_result){ 
+		var author_array 	   	  = search_result.authors.split(','); 
+		
+		var source_publication_obj = { 
+			title: search_result.title,
+			google_cluster_id: search_result.google_cluster_id,
+			publication_date: search_result.publication_date,
+			citation_count: search_result.citation_count,
+			pdf_link: search_result.pdf_link
+		}
+
+		var new_pub = false;
+
+		_.each(author_array, function(val, key){ 
+				
+			var cleaned_name = val.replace('…', '')
+			cleaned_name = cleaned_name.trim()
+			
+			target_author_obj = { 
+				name: cleaned_name,
+				distance: 1
+			};
+			
+			if (target_author_obj.name !== '') {
+				var created = bibnet.insertAuthorship(source_publication_obj, target_author_obj);
+				if(created) { 
+					new_pub = true
+				}
+			}
+		});
+		if(new_pub) { 
+			return  'added'
+		} else { 
+			return 'duplicate'
+		}
+	}
 });
 
 
