@@ -21,10 +21,15 @@ PublicationsSchema = new SimpleSchema({
 	    type: Date,
 	    label: "Publication Date"
 	},
-	"distance": { 
-		type: Number,
-		label: 'Distance',
-		defaultValue: 20
-	}
+  	"authors": {
+	    type: String,
+	    label: "Authors"
+	},	
+  	"author_ids": {
+	    type: [String],
+	    label: "Author IDs",
+	    optional:true
+	},		
+
 });
 Publications.attachSchema( PublicationsSchema ); 

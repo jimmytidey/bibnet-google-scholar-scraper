@@ -19,11 +19,6 @@ AuthorsSchema = new SimpleSchema({
     type: String,
     label: "target",
     optional:true,    
-  },
-  "distance": { 
-    type: Number,
-    label: 'Distance', 
-    defaultValue: 20
   }
 });
 

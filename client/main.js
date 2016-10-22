@@ -53,7 +53,7 @@ Template.registerHelper(
 
 Template.publicationSearchResults.helpers({
 	'searchResults': function (val) {
-		return  PublicationsSearchResults.find({removed:false});
+		//return  PublicationsSearchResults.find({removed:false});
 	}
 });
 
