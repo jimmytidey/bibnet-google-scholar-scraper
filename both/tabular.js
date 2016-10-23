@@ -3,6 +3,17 @@ TabularTables = {};
 TabularTables.Authors = new Tabular.Table({
   name: "Authors",
   collection: Authors,
+   selector: function( userId ) {
+    var project_ids = []; 
+    
+    Projects.find({users:userId}).forEach(function(val){ 
+      project_ids.push(val._id); 
+    });
+
+    console.log('project_ids', project_ids); 
+
+    return {author_project_ids:{$in: project_ids}}
+  }, 
   columns: [
     {data: "name", title: "Name"},
   ]
@@ -11,6 +22,17 @@ TabularTables.Authors = new Tabular.Table({
 TabularTables.Publications = new Tabular.Table({
   name: "Publications",
   collection: Publications,
+  selector: function( userId ) {
+    var project_ids = []; 
+    
+    Projects.find({users:userId}).forEach(function(val){ 
+      project_ids.push(val._id); 
+    });
+
+    console.log('project_ids', project_ids); 
+
+    return {corpus_project_ids:{$in: project_ids}}
+  },
   columns: [
     {data: "title", title: "Title of publication"},
     {
@@ -29,15 +51,5 @@ TabularTables.Publications = new Tabular.Table({
       title: "Delete",
       tmpl: Meteor.isClient && Template.deletePublication
     }
-  ]
-});
-
-TabularTables.Edges = new Tabular.Table({
-  name: "Edges",
-  collection: Edges,
-  columns: [
-    {data: "type", title: "Title"},
-    {data: "source", title: "Source"},
-    {data: "target", title: "Target"}
   ]
 });

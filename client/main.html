@@ -7,13 +7,21 @@
   <div class='container'> 
 
 		<div class='row'>   		
-			<div class='col-md-11'>  		
+			<div class='col-md-8'>  		
   				<h1>BibNet</h1>
   			</div>
-			<div class='col-md-1'>  		
-  				<button type="button" class="btn btn-default logout">logout</button>
+  			<div class='col-md-3 project-status'>
+				{{> currentProject }}
+				(<a href='#' class="change-project">Add / Rename projects</a>)
+  			</div>
+  			 
+			<div class='col-md-1'>
+
+  				<a type="button" class="logout">Logout</a>
   			</div>  			
   		</div>
+
+  		<hr/>
 
   		<div class='row'>   		
 			
@@ -27,7 +35,8 @@
 					</span>
 				</div>
 
-				{{> publicationSearchResults }}
+
+				{{> publicationSearchResults  }}
 			</div>
 
 			<div class='col-md-4 tables '>
@@ -47,31 +56,22 @@
 			<div class='col-md-8 tables'>
 				
 				<h4>Publications</h4>
-				{{> tabular table=TabularTables.Publications class="table table-striped table-bordered table-condensed"}}
+				{{> tabular table=TabularTables.Publications selector=pub_selector class="table table-striped table-bordered table-condensed"}}
 			</div>  		
 			<div class='col-md-4 tables author-table'>
 				<h4>Authors</h4>
-				{{> tabular table=TabularTables.Authors class="table table-striped table-bordered table-condensed"}}	
+				{{> tabular table=TabularTables.Authors selector=selector class="table table-striped table-bordered table-condensed"}}	
 			</div>
 
 		</div>
-		<!--
-		<div class='row'> 		
-			<div class='col-md-12 tables'>	
-				{{> tabular table=TabularTables.Edges class="table table-striped table-bordered table-condensed"}}
-			</div>
-		</div>		
-		-->
-		{{> output }}
+
+		{{> networkGraph }}
 	
 	</div>
 	
 </body>
 
-
-
 <template name="output">
-
 	<h3>Output</h3>
 	<br/> 
 	<div class='row'> 
@@ -94,9 +94,9 @@
 	<a href='{{this.pdf_link}}'>Link</a>
 </template>
 
-
 <template name='publicationSearchResults'>
-	<table class="table"> 
+	<div class='pubsearchresults'>
+	<table class="table "> 
 		<thead>
 			<tr>
 				<th>Title</th>
@@ -120,6 +120,7 @@
 		{{/each}}
 		</tbody>
 	</table>
+	</div>
 </template>
 
 <template name="loginModal">
@@ -145,5 +146,77 @@
         </div>
     </div>
 </template>
+
+
+<template name="projectsModal">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            	<div class='row'>
+            		<div class='col-md-11 col-md-offset-1'>
+            		 	<h2>Projects</h2>
+            	 	</div>
+            	</div>
+
+            	<div class='row'>
+     				<div class='col-md-5 col-md-offset-1'>
+						<h4>List of your projects</h4>
+						<div class="list-group">
+	            		{{#each projects}}
+							<a href="#"  class="list-group-item {{ is_current_project _id }}">{{project_name}}</a>
+						 {{/each}}
+						 </div>
+     				</div>
+     				<div class='col-md-5'>
+
+     				    <h4>Rename the current project</h4>
+     					<div class="input-group">
+
+							<input type="text" class="form-control rename-text" placeholder="Rename this project...">
+							<span class="input-group-btn">
+								<button class="btn btn-secondary rename" type="button">Rename</button>
+							</span>							
+						</div>
+
+						<hr/> 
+						
+     					<h4>Add project</h4>
+						<div class="input-group">
+
+							<input type="text" class="form-control new-project-text" placeholder="Name of new project... ">
+							<span class="input-group-btn">
+								<button class="btn btn-secondary new-project" type="button">Add</button>
+							</span>
+						</div>
+
+						
+
+
+
+						<br/>
+     				</div>
+
+     			</div>
+
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="currentProject">
+	{{#each currentProjectDoc}}
+		<p><strong>Current project: </strong>{{project_name}}</p>
+	 {{/each}}
+</template>
+
+<template name="networkGraph">
+	<div class='row'>
+		<div class='col-md-12' id='network_graph_container'> 
+			
+		</div>
+	</div>
+</template>
+
+
 
 

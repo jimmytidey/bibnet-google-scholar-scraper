@@ -93,6 +93,9 @@ Meteor.methods({
 		var ret = begin_string + all_edges_string + all_nodes_string + end_string; 
 		
 		return ret; 
+	}, 
+	getAlchemyNetwork: function(project_id) { 
+
 	}
 });
 

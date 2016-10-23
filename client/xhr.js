@@ -42,7 +42,9 @@ Meteor.chrome_extension_xhr.determineType = function(remote_dom){
  	if(is_citation_page.length > 0) { 
  		console.log('this is a citation page'); 
  	} else { 
- 		Meteor.call('parsePublicationHTML', remote_dom, Meteor.userId());
+ 		var number_of_results = $(jquery_remote_dom).find('#gs_ccl_results > div').length;  
+ 		Notifications.info('Search completed with ' + number_of_results + ' results');
+ 		Meteor.call('parsePublicationHTML', remote_dom, Session.get("current_project"));
  	}	
 }
 

@@ -40,7 +40,7 @@ bibnet.SearchForPublications = function(search_string) {
 
 }
 
-bibnet.parsePublicationHTML = function(html, user_id) { 
+bibnet.parsePublicationHTML = function(html, project_id) { 
 	$ = cheerio.load(html);
 	
 	var number_of_results = $('#gs_ccl_results > div').length;  
@@ -48,7 +48,7 @@ bibnet.parsePublicationHTML = function(html, user_id) {
 
 	for(var i=1; i<=number_of_results; i++) {
 		
-		bibnet.parsePublication(i, user_id); 
+		bibnet.parsePublication(i, project_id); 
 	}
 }
 
@@ -148,7 +148,7 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 	}
 } 
 
-bibnet.parsePublication = function(item_number, user_id) { 
+bibnet.parsePublication = function(item_number, project_id) { 
 
 	if(bibnet.isRateLimited()) { 
 		console.log('google hates you')
@@ -171,7 +171,7 @@ bibnet.parsePublication = function(item_number, user_id) {
 		};
 		
 		if (target_author_obj.name !== '') {
-			bibnet.insertAuthorship(source_publication_obj, target_author_obj, user_id)
+			bibnet.insertAuthorship(source_publication_obj, target_author_obj, project_id)
 		}
 	});
 }
@@ -248,22 +248,13 @@ bibnet.insertCitation = function(source_publication_obj, target_publication_obj)
 
 }
 
-bibnet.insertAuthorship = function(source_publication_obj, target_author_obj, user_id) { 
-
+bibnet.insertAuthorship = function(source_publication_obj, target_author_obj, project_id) { 
 
 	var target_author_id = bibnet.insertAuthor(target_author_obj);
 	var source_publication_id = bibnet.insertPublication(source_publication_obj);
 	
-	Publications.find({source_publication_id}, {$push:{author_ids:target_author_id}});
-
-	//ensure user exists
-	var extant = UserPublications.findOne({user_id:user_id});
+	Publications.update({_id: source_publication_id}, {$addToSet:{author_ids:target_author_id, search_result_project_ids:project_id}});
 	
-	if(!extant) { 
-		UserPublications.insert({user_id:user_id});
-	}
-
-	UserPublications.update({user_id:user_id}, {$push:{search_results: source_publication_id}});
 
 	var edge_obj = {type:'author', source: source_publication_id, target: target_author_id }
 

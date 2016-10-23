@@ -29,7 +29,26 @@ PublicationsSchema = new SimpleSchema({
 	    type: [String],
 	    label: "Author IDs",
 	    optional:true
-	},		
+	},
+  	"search_result_project_ids": {
+	    type: [String],
+	    label: "Search Result Project IDs",
+	    optional:true
+	},	
+  	"corpus_project_ids": {
+	    type: [String],
+	    label: "Corpus Project IDs",
+	    optional:true
+	}	
 
 });
 Publications.attachSchema( PublicationsSchema ); 
+
+Publications.allow({
+    update: function(userId, doc) {
+       if(userId){
+       		return true
+       }
+    }
+})
+

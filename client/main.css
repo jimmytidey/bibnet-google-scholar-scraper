@@ -69,3 +69,18 @@ table.dataTable.table-condensed > thead > tr > th {
 .pagination > li > a { 
   padding:6px 8px;
 }
+
+.pubsearchresults { 
+  max-height: 300px;
+  overflow: auto;
+  border:1px solid #ccc;
+ }
+
+.project-status { 
+  padding-top:15px;
+}
+
+ .logout { 
+  float:right;
+  padding-top:15px;
+}

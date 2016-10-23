@@ -19,7 +19,20 @@ AuthorsSchema = new SimpleSchema({
     type: String,
     label: "target",
     optional:true,    
+  },
+  "author_project_ids": {
+    type: [String],
+    label: "target",
+    optional:true,    
   }
 });
 
 Authors.attachSchema( AuthorsSchema ); 
+
+Authors.allow({
+    update: function(userId, doc) {
+       if(userId){
+          return true
+       }
+    }
+})

@@ -1,8 +1,8 @@
-Meteor.publish('publicaitons', function tasksPublication() {
-	var user_pubs = UserPublications.findOne({user_id: Meteor.usedId()}); 
-	return Publications.find(); 
+
+Meteor.publish('search_results', function (project_id) {
+	console.log('search_results proj id', project_id); 
+	var search_pubs = Publications.find({search_result_project_ids: project_id})
+    console.log('search_pubs.fetch()',search_pubs.fetch())
+    return search_pubs;
 });
 
-Meteor.publish('search_results', function tasksPublication() {
-	return Publications.find(); 
-});
