@@ -10,8 +10,9 @@ window.addEventListener('message', function(event) {
 		xhr.onreadystatechange = function() {
 		  if (xhr.readyState == 4) {
 		    console.log('content script did xhr request');
-		    	    
+		   	console.log('xhr',xhr);
 		    if(xhr.status == 200) { 
+		    	
 		    	var return_val = '__bibnet_xhr_response__' + xhr.responseText; 
 		    } else { 
 		    	return_val = '__bibnet_xhr_response__bibnet_error_' + xhr.status; 

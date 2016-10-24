@@ -13,14 +13,13 @@ Template.body.events({
 		if (evt.which === 13) {
 			console.log('finding publications');
 			var search_string = $('.publication_string').val();
-			Meteor.parsePublications.searchPublications(search_string);
-			 
+			Meteor.parsePublications.searchPublications(search_string); 
 		}
 	},
 	'click .add-citations'(event) {
 		event.preventDefault();
 		console.log('adding citations');
-		Meteor.call('addCitations');
+		Meteor.parsePublications.addCitations();
 	},
 	'click .remove-citations'(event) {
 		event.preventDefault();
@@ -66,9 +65,7 @@ Template.publicationSearchResults.helpers({
 		var search_results =  new ReactiveVar( false );
 		
 		Meteor.subscribe('search_results', Session.get('current_project'));
-
 		var search_pubs = Publications.find({search_result_project_ids: Session.get('current_project')});
-
 		console.log(search_pubs);
 		return  search_pubs;
 	}

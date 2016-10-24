@@ -18,11 +18,8 @@ window.addEventListener('message', function(event) {
 		}
 
 		else { 
-			
 			Meteor.chrome_extension_xhr.determineType(response)
-			
 		}	
-
 	}
 });
 

@@ -1,14 +1,16 @@
 Meteor.methods({
-	addCitations: function () {
+
+	returnCitationsToCheck: function (project_id) {
 		console.log('*******************************************')
-		console.log('Add citations called'); 
+		console.log('Return Citations To Check '); 
 		
 		bibnet.citation_search_array = []; 
 		bibnet.citation_search_array_filtered = []; // this array for citations searches that have not been carried out 
 
-		var publications = Publications.find({distance:2}, {sort:{citation_count:-1}}).fetch();
-		var authors 	 = Authors.find({distance:1}).fetch(); 
+		var publications = Publications.find({corpus_project_ids:project_id}, {sort:{citation_count:-1}}).fetch();
+		var authors 	 = Authors.find({author_project_ids:project_id}).fetch(); 
 
+		
 
 		_.each(publications, function(publication, pub_key){
 			_.each(authors, function(author, author_key){
@@ -33,31 +35,10 @@ Meteor.methods({
 				bibnet.citation_search_array_filtered.push(val); 
 			}
 
-			if(bibnet.citation_search_array_filtered.length>300) { 
+			if(bibnet.citation_search_array_filtered.length>4) { 
 				return true; 
 			}
 		});
-
-		
-		bibnet.addCitationsTimer = Meteor.setInterval(function(){
-			if (bibnet.citation_search_array_filtered.length>1) {
-				console.log('left to process: ', bibnet.citation_search_array_filtered.length );
-				cite_search_obj = bibnet.citation_search_array_filtered.pop(); 
-				bibnet.addCitations(cite_search_obj);
-			} else { 
-				console.log('*******************************************')
-				console.log(' ')
-				console.log('SEARCH ENDED');
-				Meteor.clearInterval(bibnet.addCitationsTimer);
-			}
-		}, ((Math.random() * 4050) ) );		
-	}, 
-});
-
-Meteor.methods({
-	removeCitations: function () {
-		console.log('Remove citations called'); 
-		Edges.remove({type:'cites'}); 
-		Edges.remove({type:'citation_checked'}); 
-	}, 
+		return bibnet.citation_search_array_filtered;
+	}
 });
