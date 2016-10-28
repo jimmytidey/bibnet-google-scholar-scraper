@@ -1,5 +1,5 @@
 <head>
-  <title>Bibnet</title>
+  <title>Who Cites?</title>
 </head>
 
 <body>
@@ -8,7 +8,7 @@
 
 		<div class='row'>   		
 			<div class='col-md-8'>  		
-  				<h1>BibNet</h1>
+  				<h1>Who Cites?</h1>
   			</div>
   			<div class='col-md-3 project-status'>
 				{{> currentProject }}
@@ -31,10 +31,11 @@
 				<div class="input-group">
 					<input type="text" class="form-control publication_string" placeholder="Search for papers or books to add">
 					<span class="input-group-btn">
-						<button class="btn btn-secondary find-publication" type="button">Go!</button>
+						<button class="btn btn-secondary find-publication" type="button">Search</button>
 					</span>
 				</div>
 
+				<h4>Search results</h4>
 
 				{{> publicationSearchResults  }}
 			</div>
@@ -42,10 +43,18 @@
 			<div class='col-md-4 tables '>
 				<h4>Add citations</h4>
 				<button type="button" class="btn btn-default add-citations">Add Citations</button>
-				
-				<h4>Export</h4>
+				<div class="btn-group" role="group" aria-label="...">
+				  <button type="button" class="btn btn-default citation-count">Calculate citations left to add</button>
+				  <button type="button" class="btn btn-default citation-count-result">Unknown</button>
+				 
+				</div>
+
+				<hr/>
+
+				<h4>Export for gephi</h4>
 				<button type="button" class="btn btn-default generate-dot-file">Generate .dot file</button>
 				<button type="button" class="btn btn-default generate-cocitation-dot-file">Generate Cocitation .dot file</button>
+				<div class='gephi-results'></div>
 			</div>
 				
 		</div>
@@ -109,7 +118,7 @@
 		</thead>
 		<tbody>
 		{{#each searchResults}}
-			<tr data-search-result-id='{{this._id}}'>
+			<tr data-search-result-id='{{this._id}}' class='search-result'>
 				<td class='search-result-title'  >{{this.title}}</td>
 				<td class='search-result-authors' >{{this.authors}}</td>
 				<td class='search-result-authors'>{{ cleanDate publication_date}}</td>
@@ -128,19 +137,40 @@
         <div class="modal-dialog">
             <div class="modal-content">
             	<div class='row'>
-            		<div class='col-md-4 col-md-offset-4'>
-            			<h2>Bibnets</h2>
+            		<div class='col-md-8 col-md-offset-2'>
+            			<h2 class='modal-title'>Who Cites?</h2>
+            			<p>Generate a network of citations between academic publications you are interested in.</p>
+            			<hr/>
             		</div>
+
             	</div>
 
             	<div class='row'>
-     				<div class='col-md-6'>
+     				<div class='col-md-6 col-md-offset-3'>
      					{{> atForm}}
      				</div>
-     				<div class='col-md-6'>
-     					<h3>You'll be needing the chrome plugin too.</h3>
-     				</div>
+  
      			</div>
+
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="pluginModal">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            	<div class='row'>
+            		<div class='col-md-8 col-md-offset-2'>
+            			<h2 class='modal-title'>You need a plugin</h2>
+            			<p>This allows the site to contact Google Scholar on your behalf.</p>
+            			<p><a target='_blanck' href='https://chrome.google.com/webstore/detail/bgihejmgdhcaonifndbkdgbddbghefab'>Install by clicking here</a></p>
+            			<hr/>
+            		</div>
+
+            	</div>
+
 
             </div>
         </div>

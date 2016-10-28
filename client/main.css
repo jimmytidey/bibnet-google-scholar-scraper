@@ -84,3 +84,13 @@ table.dataTable.table-condensed > thead > tr > th {
   float:right;
   padding-top:15px;
 }
+
+.dot-file { 
+  height:5em;
+  width:100%;
+ }
+
+ .modal-title { 
+  text-align: center;
+  padding:1em 0;
+}

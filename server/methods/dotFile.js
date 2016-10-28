@@ -2,7 +2,7 @@
 Meteor.methods({
 	generateDotFile: function () {
 		console.log('generating dot file')
-		var begin_string = 'digraph LocalNets {\n'; 
+		var begin_string = 'digraph Bibnets {\n'; 
 		var edges = []; 
 		var nodes = []; 
 		var end_string = '}';
@@ -32,21 +32,21 @@ Meteor.methods({
 });
 
 Meteor.methods({
-	generateCocitationDotFile: function () {
+	generateCocitationDotFile: function (project_id) {
 		console.log('generating dot file')
-		var begin_string = 'digraph LocalNets {\n'; 
+		var begin_string = 'digraph Bibnets {\n'; 
 		var edges = []; 
 		var nodes = [];
 		var end_string = '}';Publications
 
 
 		//list of all authors 
-		Authors.find().forEach(function(val){ 
+		Authors.find({author_project_ids:project_id}).forEach(function(val){ 
 			var author_string = val._id + ' ' + '[label="'+val.name+'", distance="'+val.distance+'", type="author" , google_author_id="'+val.google_author_id +'", tags="'+val.tags+'", institution="'+val.institution+'"]\n';  
 			nodes.push(author_string); 
 		});
 
-		Publications.find().forEach(function(pub_obj){ 
+		Publications.find({corpus_project_ids:project_id}).forEach(function(pub_obj){ 
 			
 			//check for coauthorship of this publication
 			var author_array = Edges.find({type:'author',source:pub_obj._id}).fetch();

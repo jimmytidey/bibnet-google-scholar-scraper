@@ -1,21 +1,17 @@
 {
-  "name": "Bibnets",
-  "version": "0.1",
-  "description": "A browser extension to help bibnet.io",
+  "name": "Who Cites?",
+  "version": "0.2",
+  "description": "Explore the academic citation network",
   "browser_action": {
-      "default_title": "Bibnets"
+      "default_title": "Who Cites?"
   },
   "manifest_version": 2,
   "permissions": [
-    "http://*.google.com/",
-    "https://*.google.com/",
-    "http://*.google.co.uk/",
-    "https://*.google.co.uk/"    
+    "https://*/*"
   ],
-  "content_security_policy": "script-src 'self' https://google.com; object-src 'self'",
   "content_scripts": [
     {
-      "matches": ["http://localhost/*"],
+      "matches": ["http://localhost/*", "http://whocites.com/","http://www.whocites.com/"],
       "js": ["content_script.js"],
       "run_at": "document_idle"
     }

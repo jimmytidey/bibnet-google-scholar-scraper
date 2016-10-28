@@ -5,15 +5,14 @@ window.addEventListener('message', function(event) {
  		var xhr = new XMLHttpRequest();
  		
 		xhr.open("GET", event.data.split('__bibnet_xhr_request__')[1], true);
-
 		
 		xhr.onreadystatechange = function() {
 		  if (xhr.readyState == 4) {
 		    console.log('content script did xhr request');
-		   	console.log('xhr',xhr);
+		   
 		    if(xhr.status == 200) { 
-		    	
-		    	var return_val = '__bibnet_xhr_response__' + xhr.responseText; 
+
+		    	var return_val = '__bibnet_xhr_response__' + xhr.responseURL + '__bibnet_html__' + xhr.responseText; 
 		    } else { 
 		    	return_val = '__bibnet_xhr_response__bibnet_error_' + xhr.status; 
 		    }

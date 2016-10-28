@@ -54,22 +54,11 @@ bibnet.parsePublicationHTML = function(html, project_id) {
 
 bibnet.addCitations = function (cite_search_obj) { 
 	
-	var connection = bibnet.setupRequest(); 
-	var result = connection.getSync(cite_search_obj.url);
 
-	console.log('--------------------------------------------------------------------')
-	console.log('--------------------------------------------------------------------')
-	console.log('Publication: ', cite_search_obj.publication_obj.title);
-	console.log('testing for citations by ', cite_search_obj.author_obj.name)
-
-	$ = cheerio.load(result.body);
+	$ = cheerio.load(cite_search_obj.html);
 	
 	var number_of_results = $('#gs_ccl_results > div').length; 
 	console.log('number_of_results ------------------->', number_of_results); 
-
-	if(number_of_results ==0) { 
-		//console.log($('body').html().substring(0,3000));
-	}
 
 
 	for(var i=1; i<=number_of_results; i++) {

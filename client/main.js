@@ -5,12 +5,29 @@ import './main.html';
 Template.body.events({
 	'click .find-publication'(event) {
 		event.preventDefault();
+		$('.search-result').each(function(){
+			var res_id = $(this).data('search-result-id') 
+			Publications.update({_id :res_id}, {
+				$pull:{search_result_project_ids:Session.get('current_project')}
+			}); 
+		})		
 		console.log('finding publications');
 		var search_string = $('.publication_string').val();
 		Meteor.parsePublications.searchPublications(search_string);
+
 	},
 	'keypress .publication_string': function (evt, template) {
+		
+
+
 		if (evt.which === 13) {
+
+			$('.search-result').each(function(){
+				var res_id = $(this).data('search-result-id') 
+				Publications.update({_id :res_id}, {
+					$pull:{search_result_project_ids:Session.get('current_project')}
+				}); 
+			})
 			console.log('finding publications');
 			var search_string = $('.publication_string').val();
 			Meteor.parsePublications.searchPublications(search_string); 
@@ -19,26 +36,36 @@ Template.body.events({
 	'click .add-citations'(event) {
 		event.preventDefault();
 		console.log('adding citations');
+		Notifications.success('Adding 10 citations');
 		Meteor.parsePublications.addCitations();
 	},
-	'click .remove-citations'(event) {
+	'click .citation-count'(event) {
 		event.preventDefault();
-		console.log('removing citations');
-		Meteor.call('removeCitations');
+		Meteor.call('countRemainingCitations',Session.get('current_project'), function(err, res){ 
+			$('.citation-count-result').html(res);
+		});
 	}, 
 	'click .generate-dot-file'(event)  {
 		event.preventDefault();
 		console.log('generating dot file');
+		$('.dot-file').remove();
+		Notifications.success('dot file processing');
 		Meteor.call('generateDotFile', function(err, dotFile){ 
-			console.log('dot file returned');
+			$('.gephi-results').append("<p>For now, you'll have to copy any paste this into a text file");
+			$('.gephi-results').append("<textarea class='dot-file'></textarea>");
+			
 			$('.dot-file').val(dotFile);
 		});
 	}, 
 	'click .generate-cocitation-dot-file'(event)  {
 		event.preventDefault();
 		console.log('generating cocitation dot file');
+		Notifications.success('dot file processing');
+		$('.dot-file').remove();
 		Meteor.call('generateCocitationDotFile', function(err, dotFile){ 
-			console.log('dot file returned');
+			$('.gephi-results').append("<p>For now, you'll have to copy any paste this into a text file");
+			$('.gephi-results').append("<textarea class='dot-file'></textarea>");
+			
 			$('.dot-file').val(dotFile);
 		});
 	},
@@ -99,7 +126,9 @@ Template.deletePublication.events({
   'click .delete-publication': function () {
 	event.preventDefault();
 	console.log('delete publication ' + this._id);
-	Meteor.call('deletePublication', this._id);  	
+	Meteor.call('deletePublication', this._id, Session.get('current_project'), function(err,res){ 
+		Notifications.error('Publication deleted');
+	});  	
   }
 });
 
@@ -122,6 +151,10 @@ Template.currentProject.helpers({
 });
 
 
+
+
+
+
 Template.body.onRendered(function () {
 	if(!Meteor.userId()) {
 		Modal.show('loginModal');
@@ -141,15 +174,15 @@ Accounts.onLogout(function() {
 });
 
 
-
-Accounts.onLogin(function() {
-	Modal.hide('loginModal');
-	
+Accounts.onLogin(function() {	
+	if ($('.bibnet_plugin_is_installed').length > 0){
+		Modal.hide('loginModal');
+		clearInterval(window.bibnet_timer);
+	}
 	Meteor.subscribe('projects', function() {    
 		var current_project = Projects.findOne({users: Meteor.userId()});
 		Session.set("current_project", current_project._id);
   	});
-
 });
 
 Template.projectsModal.helpers({
@@ -205,7 +238,7 @@ Template.body.helpers({
 
 Meteor.startup(function () {
     _.extend(Notifications.defaultOptions, {
-        timeout: 3000
+        timeout: 5000
     });
 });
 

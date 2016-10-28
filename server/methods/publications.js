@@ -22,7 +22,7 @@ Meteor.methods({
 			}
 		}, (Math.random() * 10000) + 2000) 
 	},
-	deletePublication: function(publication_id) { 
+	deletePublication: function(publication_id, project_id) { 
 
 		console.log('deletePublication called');
 		
@@ -34,18 +34,14 @@ Meteor.methods({
 
 			if(other_pubs_with_this_author.length ===0) { 
 				console.log('removing author ',  edge_doc.target);
-				Authors.remove({_id: edge_doc.target})
+				Authors.update({_id: edge_doc.target}, {$pop: {author_project_ids: project_id}})
 			}
 			else { 	
 				console.log('this author is authored another publication',  edge_doc.target)
 			}
-			
-
 		})
 
-		Edges.remove({type:'author', source:publication_id});
-
-		Publications.remove({_id: publication_id});
+		Publications.update({_id: publication_id}, {$pop: {corpus_project_ids: project_id}});
 		 
 	},
 	parsePublicationHTML: function(html, user_id) { 

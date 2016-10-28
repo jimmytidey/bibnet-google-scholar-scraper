@@ -35,6 +35,7 @@ TabularTables.Publications = new Tabular.Table({
   },
   columns: [
     {data: "title", title: "Title of publication"},
+    {data: "authors", title: "Authors"},
     {
       data: 'pdf_link',
       title: "PDF",
