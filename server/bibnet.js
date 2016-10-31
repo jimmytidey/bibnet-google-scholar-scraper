@@ -65,6 +65,8 @@ bibnet.addCitations = function (cite_search_obj) {
 		bibnet.parseCitation(i, cite_search_obj); 
 	}
 
+	serverMessages.notify('serverMessage:info', number_of_results + ' for ' + cite_search_obj.author_obj.name + ' citing ' + cite_search_obj.pub_obj.title.slice(0,40));
+
 	if(!bibnet.isRateLimited()) {
 		Edges.insert({type:'citation_checked', source:cite_search_obj.publication_obj._id, target: cite_search_obj.author_obj._id});
 	}
@@ -77,6 +79,7 @@ bibnet.isRateLimited = function() {
 		Meteor.clearInterval(bibnet.paperSearchTimer);
 		console.log('Google hates you'); 
 		console.log($('#gs_captcha_f').html());
+		serverMessages.notify('serverMessage:error', 'Rate limit!', "You'll have to solve a captcha in the popup window");
 		return true 
 	} else {
 		return false 
@@ -98,7 +101,9 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 	// check that this result really is a citation of the author in question
 	var author_names 	= $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri .gs_a ').text(); 
 	var surname 		= cite_search_obj.author_obj.name.split(' ')[1];
+	var success			=false
 	console.log(cite_search_obj.author_obj);
+
 	
 	var author_found 	= author_names.search(surname);
 
@@ -107,7 +112,7 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 		console.log('Found: ', surname)
 
 		target_publication_obj = bibnet.parsePublicationItem(item_number);
-		target_publication_obj.distance = item_number + 20;
+		
 
 		var author_string 		= $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > div.gs_a ').text().split('-')[0];
 		
@@ -115,27 +120,38 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 
 		_.each(author_array, function(val, key){
 
-		var cleaned_name = val.replace('…', '')
-		cleaned_name = cleaned_name.trim()
+			var cleaned_name = val.replace('…', '')
+			cleaned_name = cleaned_name.trim()
 
 			source_author_obj = { 
 				name: cleaned_name,
-				distance: item_number + 20
+				project_id: cite_search_obj.project_id
 			}
 			if (source_author_obj.name !== '') {
 				bibnet.insertAuthorship(target_publication_obj, source_author_obj)
 			}
+
+			//add this project to the author 
+			//Authors.update({name:cleaned_name}, {$push:{author_project_ids: cite_search_obj.project_id}})
+
 		});
 
 		source_publication_obj 	= Publications.findOne({google_cluster_id: target_publication_obj.google_cluster_id}); 
 
+		//add the publication to the author
+		//Publications.update({google_cluster_id: target_publication_obj.google_cluster_id}, {$push:{corpus_project_ids:cite_search_obj.project_id}}); 
+
 		target_publication_obj 	= cite_search_obj.publication_obj; 
+
 		bibnet.insertCitation(source_publication_obj, target_publication_obj); 
+		success = true;
 	}
 	else {
-
+		//serverMessages.notify('serverMessage:info', surname + ' does not cite ' + target_publication_obj.title.slice(0,40));
 		console.log('does not contain: ', surname)
 	}
+
+	return success; 
 } 
 
 bibnet.parsePublication = function(item_number, project_id) { 
@@ -233,6 +249,7 @@ bibnet.insertCitation = function(source_publication_obj, target_publication_obj)
 		console.log('Already in DB  - ' + source_publication_obj.title.slice(0,40)  + ' cites '  + target_publication_obj.title.slice(0,40))
 	} else { 
 		console.log('Adding citation  - ' + source_publication_obj.title.slice(0,40)  + ' cites '  + target_publication_obj.title.slice(0,40))
+		
 		Edges.insert(edge_obj);
 	}
 

@@ -3,7 +3,6 @@ Meteor.methods({
 		
 		console.log('find papers called'); 
 
-
 		bibnet.list_of_papers = list_of_papers.split(/\n/)
 
 		bibnet.paperSearchTimer = Meteor.setInterval(function(){
@@ -45,6 +44,7 @@ Meteor.methods({
 		 
 	},
 	parsePublicationHTML: function(html, user_id) { 
+		console.log('user_id for parsePublicationHTML', user_id);
 		bibnet.parsePublicationHTML(html, user_id) 
 	}, 
 

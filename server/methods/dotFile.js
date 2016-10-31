@@ -37,12 +37,12 @@ Meteor.methods({
 		var begin_string = 'digraph Bibnets {\n'; 
 		var edges = []; 
 		var nodes = [];
-		var end_string = '}';Publications
+		var end_string = '}';
 
 
 		//list of all authors 
 		Authors.find({author_project_ids:project_id}).forEach(function(val){ 
-			var author_string = val._id + ' ' + '[label="'+val.name+'", distance="'+val.distance+'", type="author" , google_author_id="'+val.google_author_id +'", tags="'+val.tags+'", institution="'+val.institution+'"]\n';  
+			var author_string = val._id + ' ' + '[label="'+val.name+'", type="author"]\n';  
 			nodes.push(author_string); 
 		});
 
@@ -50,7 +50,7 @@ Meteor.methods({
 			
 			//check for coauthorship of this publication
 			var author_array = Edges.find({type:'author',source:pub_obj._id}).fetch();
-
+			console.log('-->pub_obj._id', pub_obj._id);
 
 			_.each(author_array, function(outer){ 
 				_.each(author_array, function(inner){ 
@@ -59,10 +59,16 @@ Meteor.methods({
 						edges.push(edge_string); 
 					}
 				});
+
+				Authors.find({_id:outer.target}).forEach(function(val){ 
+					var author_string = val._id + ' ' + '[label="'+val.name+'", type="author"]\n';  
+					nodes.push(author_string); 
+				});
 			});
 			
 			//section to find authors who cite this publication 
 			var citing_author_array = [];
+			
 
 			//find publications that cite this publication 
 			Edges.find({type:'cites',target:pub_obj._id}).forEach(function(citing_pub_obj) { 
@@ -71,16 +77,24 @@ Meteor.methods({
 				Edges.find({type:'author', source:citing_pub_obj.source}).forEach(function(citing_author_obj) { 
 					citing_author_array.push(citing_author_obj.target); 
 				}); 
-			}); 
+			});
 
+			console.log('citing_author_array', citing_author_array);
+			
 			//make each citing author cite every author of the original publication, if there are any 
 			if(citing_author_array.length>0) {
-				console.log('citing_author_array', citing_author_array);
+				
 				_.each(citing_author_array, function(citing_author){ 
 					_.each(author_array, function(author){
 						var edge_string = citing_author + ' -> ' + author.target + ' [edge_type=cites]\n' ;
 						edges.push(edge_string); 
 					}); 
+
+					Authors.find({_id:citing_author}).forEach(function(val){ 
+						var author_string = val._id + ' ' + '[label="'+val.name+'", type="author"]\n';  
+						nodes.push(author_string); 
+					});
+
 				}); 
 			}
 		

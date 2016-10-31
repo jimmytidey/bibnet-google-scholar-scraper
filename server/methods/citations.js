@@ -49,13 +49,13 @@ Meteor.methods({
  		var author_obj = Authors.findOne({name:cite_obj.author_name});
  		var publication_obj = Publications.findOne({google_cluster_id: cite_obj.google_pub_id});
 
+ 		
  		var cite_search_obj = { 
  			author_obj: author_obj,
  			publication_obj: publication_obj,
- 			html: cite_obj.html
+ 			html: cite_obj.html, 
+ 			project_id: cite_obj.project_id
  		} 
-
- 		
 
  		bibnet.addCitations(cite_search_obj);
 

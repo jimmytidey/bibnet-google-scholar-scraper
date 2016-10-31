@@ -18,8 +18,6 @@ Template.body.events({
 	},
 	'keypress .publication_string': function (evt, template) {
 		
-
-
 		if (evt.which === 13) {
 
 			$('.search-result').each(function(){
@@ -35,15 +33,9 @@ Template.body.events({
 	},
 	'click .add-citations'(event) {
 		event.preventDefault();
-		console.log('adding citations');
-
-		if ($('.bibnet_plugin_is_installed_v05').length == 0){
-			Modal.show('pluginModal');
-		} 
-		else {
-			Notifications.success('Adding 10 citations');
-			Meteor.parsePublications.addCitations();
-		}
+		console.log('adding citations');	
+		Meteor.parsePublications.addCitations();
+		
 	},
 	'click .citation-count'(event) {
 		event.preventDefault();
@@ -56,7 +48,7 @@ Template.body.events({
 		console.log('generating dot file');
 		$('.dot-file').remove();
 		Notifications.success('dot file processing');
-		Meteor.call('generateDotFile', function(err, dotFile){ 
+		Meteor.call('generateDotFile', Session.get('current_project') ,function(err, dotFile){ 
 			$('.gephi-results').append("<p>For now, you'll have to copy any paste this into a text file");
 			$('.gephi-results').append("<textarea class='dot-file'></textarea>");
 			
@@ -68,7 +60,7 @@ Template.body.events({
 		console.log('generating cocitation dot file');
 		Notifications.success('dot file processing');
 		$('.dot-file').remove();
-		Meteor.call('generateCocitationDotFile', function(err, dotFile){ 
+		Meteor.call('generateCocitationDotFile', Session.get('current_project') , function(err, dotFile){ 
 			$('.gephi-results').append("<p>For now, you'll have to copy any paste this into a text file");
 			$('.gephi-results').append("<textarea class='dot-file'></textarea>");
 			
@@ -86,13 +78,7 @@ Template.body.events({
 	}
 });
 
-Template.registerHelper(
-	'cleanDate', function (val) {
-		var date_obj  = new Date(val); 
-		return  val.getFullYear();
-	}
-);
-
+//Search Results Template 
 Template.publicationSearchResults.helpers({
 	'searchResults': function (val) {
 		var search_results =  new ReactiveVar( false );
@@ -125,6 +111,10 @@ Template.publicationSearchResults.events({
 	_.each(pub.author_ids, function(val,key) {
 		Authors.update({_id: val}, {$addToSet:{author_project_ids:Session.get('current_project')}});
 	});
+
+	Meteor.call('countRemainingCitations',Session.get('current_project'), function(err, res){ 
+		$('.citation-count-result').html(res);
+	});
   } 
 });
  
@@ -138,19 +128,18 @@ Template.deletePublication.events({
   }
 });
 
+//Current Project Template
 Template.currentProject.events({
-  'click .change-project': function () {
-	event.preventDefault();
-	console.log('delete publication ' + this._id);
-	Meteor.call('deletePublication', this._id);  	
-  }
+	'click .change-project': function () {
+		event.preventDefault();
+		console.log('delete publication ' + this._id);
+		Meteor.call('deletePublication', this._id);  	
+	}
 });
 
 Template.currentProject.helpers({
 	'currentProjectDoc': function (val) {
-		
 		var current_project_doc = Projects.find({_id: Session.get('current_project')});
-	  	
 		console.log('current_project_doc',current_project_doc.fetch());
 		return current_project_doc;
 	}
@@ -158,51 +147,44 @@ Template.currentProject.helpers({
 
 
 
+//Login Functionality 
 Template.body.onRendered(function () {
 	if(!Meteor.userId()) {
 		Modal.show('loginModal');
-	} else { 
-		
+	} else {
 		if(Meteor.userId()) { 
 			Meteor.subscribe('projects', Meteor.userId(), function() {
 				var current_project = Projects.findOne({users: Meteor.userId()});
 				Session.set("current_project", current_project._id);
 			});
 		}
+
+		Meteor.call('countRemainingCitations',Session.get('current_project'), function(err, res){ 
+			$('.citation-count-result').html(res);
+		});
 	}
 });
-
 Accounts.onLogout(function() {
 	Modal.show('loginModal');
 });
 
 
 Accounts.onLogin(function() {	
-	if ($('.bibnet_plugin_is_installed').length > 0){
-		Modal.hide('loginModal');
-		clearInterval(window.bibnet_timer);
-	}
+	Modal.hide('loginModal');
 	Meteor.subscribe('projects', function() {    
 		var current_project = Projects.findOne({users: Meteor.userId()});
 		Session.set("current_project", current_project._id);
   	});
 });
 
-Template.projectsModal.helpers({
-	'projects': function (val) {
-		var projects = Projects.find();
-		
-		return  projects; 
-	}, 
 
-	'is_current_project': function(id) { 
-		if (id === Session.get("current_project")) { 
-			return 'list-group-item-info';
-		}
+Template.pluginModal.events({
+	'click .plugin-installed': function(){ 
+		location.reload();
 	}
 });
 
-
+//Projects Template 
 Template.projectsModal.events({
 	'click .new-project'(event) {
 		event.preventDefault();
@@ -217,7 +199,6 @@ Template.projectsModal.events({
 		console.log('adding citations');
 		Meteor.call('addCitations');
 	},
-
 	'click .rename'(event) {
 		event.preventDefault();
 
@@ -225,25 +206,49 @@ Template.projectsModal.events({
 		var new_name = $('.rename-text').val();
 		Projects.update({_id: Session.get("current_project")},{$set:{project_name: new_name}});
 	}
-	
 });
 
+Template.projectsModal.helpers({
+	'projects': function (val) {
+		var projects = Projects.find();
+		
+		return  projects; 
+	},
+	'is_current_project': function(id) { 
+		if (id === Session.get("current_project")) { 
+			return 'list-group-item-info';
+		}
+	}
+});
+
+
+//subscriptions
 Template.body.helpers({
   pub_selector: function () {
-    return {corpus_project_ids: Session.get("current_project")}; // this could be pulled from a Session var or something that is reactive
+    return {corpus_project_ids: Session.get("current_project")}; 
   }, 
   auth_selector: function(){
-    return {author_project_ids: Session.get("current_project")}; // this could be pulled from a Session var or something that is reactive
-
-
+    return {author_project_ids: Session.get("current_project")}; 
   }
 });
 
+//set notification times 
 Meteor.startup(function () {
     _.extend(Notifications.defaultOptions, {
         timeout: 5000
     });
 });
+
+
+// Helper for everywhere 
+Template.registerHelper(
+	'cleanDate', function (val) {
+		var date_obj  = new Date(val); 
+		return  val.getFullYear();
+	}
+);
+
+
 
 
 
