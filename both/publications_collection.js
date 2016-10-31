@@ -39,6 +39,11 @@ PublicationsSchema = new SimpleSchema({
 	    type: [String],
 	    label: "Corpus Project IDs",
 	    optional:true
+	},	
+  	"exclude_in_citation_search": {
+	    type: [String],
+	    label: "Exclude in citation search",
+	    optional:true
 	}	
 
 });

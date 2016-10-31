@@ -1,2 +1,3 @@
 node_modules/
 server/keys.js
+private/

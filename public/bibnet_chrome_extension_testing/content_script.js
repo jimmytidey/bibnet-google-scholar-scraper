@@ -28,14 +28,14 @@ window.addEventListener('message', function(event) {
 			xhr.send();
 		} catch(e) { 
 			return_val = '__bibnet_xhr_response__bibnet_error_' + e; 
-			window.postMessage(return_val, "https://whocites.com");
+			window.postMessage(return_val, "http://localhost:3000");
 		}	
 	}
 }, false);
 
 
 /* allow normal js to see that the plugin is installed */ 
-if(window.location.href == 'https://whocites.com'){
+if(window.location.href == 'http://localhost:3000/'){
 	var plugin_is_installed=document.createElement("div");
 	plugin_is_installed.setAttribute("class", "bibnet_plugin_is_installed_v05");
 	document.getElementsByTagName("body")[0].appendChild(plugin_is_installed); 
@@ -57,7 +57,7 @@ if(window.location.href.search('scholar.google')>0){
 	 	
 	 	var data = JSON.stringify(cite_obj);
 	 	var xhr = new XMLHttpRequest();
-	 	xhr.open("POST", 'https://whocites.com', true);
+	 	xhr.open("POST", 'https://ba49b26e.ngrok.io/methods/addCitations', true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 		xhr.send(data);
 	}

@@ -36,8 +36,14 @@ Template.body.events({
 	'click .add-citations'(event) {
 		event.preventDefault();
 		console.log('adding citations');
-		Notifications.success('Adding 10 citations');
-		Meteor.parsePublications.addCitations();
+
+		if ($('.bibnet_plugin_is_installed_v05').length == 0){
+			Modal.show('pluginModal');
+		} 
+		else {
+			Notifications.success('Adding 10 citations');
+			Meteor.parsePublications.addCitations();
+		}
 	},
 	'click .citation-count'(event) {
 		event.preventDefault();
@@ -149,9 +155,6 @@ Template.currentProject.helpers({
 		return current_project_doc;
 	}
 });
-
-
-
 
 
 

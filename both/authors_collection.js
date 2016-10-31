@@ -24,7 +24,12 @@ AuthorsSchema = new SimpleSchema({
     type: [String],
     label: "target",
     optional:true,    
-  }
+  },
+  "exclude_in_citation_search": {
+      type: [String],
+      label: "Exclude in citation search",
+      optional:true
+  }   
 });
 
 Authors.attachSchema( AuthorsSchema ); 

@@ -98,6 +98,7 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 	// check that this result really is a citation of the author in question
 	var author_names 	= $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri .gs_a ').text(); 
 	var surname 		= cite_search_obj.author_obj.name.split(' ')[1];
+	console.log(cite_search_obj.author_obj);
 	
 	var author_found 	= author_names.search(surname);
 
@@ -290,7 +291,7 @@ bibnet.insertAuthor = function(author_obj) {
 	else {
 	   console.log('inserting author object:')
 	   console.log(author_obj.name);
-		Authors.insert(author_obj);
+		Authors.insert(author_obj)	;
 		var author = Authors.findOne({name: author_obj.name }); 
 		return author._id;
 	}

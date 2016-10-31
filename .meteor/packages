@@ -31,3 +31,5 @@ peppelg:bootstrap-3-modal
 accounts-ui@1.1.9
 useraccounts:bootstrap
 gwendall:auth-client-callbacks
+simple:rest
+tarang:ssl

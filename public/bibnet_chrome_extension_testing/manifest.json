@@ -1,6 +1,6 @@
 {
   "name": "Who Cites?",
-  "version": "0.5",
+  "version": "0.3",
   "description": "Explore the academic citation network",
   "browser_action": {
       "default_title": "Who Cites?"
@@ -11,7 +11,7 @@
   ],
   "content_scripts": [
     {
-      "matches": ["http://localhost/*", "http://whocites.com/","http://www.whocites.com/"],
+      "matches": ["http://localhost/*", "http://whocites.com/","http://www.whocites.com/", "https://scholar.google.co.uk/scholar*", "https://scholar.google.com/scholar*"],
       "js": ["content_script.js"],
       "run_at": "document_idle"
     }

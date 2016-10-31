@@ -2,13 +2,13 @@ Meteor.chrome_extension_xhr = {};
 
 Meteor.chrome_extension_xhr.get = function(url){
 
-	if ($('.bibnet_plugin_is_installed').length == 0){
+	if ($('.bibnet_plugin_is_installed_v05').length == 0){
 		Modal.show('pluginModal');
 	} 
 
 	console.log('chrome_extension_xhr called')
 	//apparently there is nothing you can do about this rather unpleasant in band messaging
- 	window.postMessage("__bibnet_xhr_request__"+ url, "http://localhost:3000");
+ 	window.postMessage("__bibnet_xhr_request__"+ url, Meteor.absoluteUrl());
 }
 
 

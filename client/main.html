@@ -49,6 +49,8 @@
 				 
 				</div>
 
+				<div class='iframe_container'></div>
+
 				<hr/>
 
 				<h4>Export for gephi</h4>
@@ -133,7 +135,7 @@
 </template>
 
 <template name="loginModal">
-    <div class="modal fade">
+    <div class="modal fade"  data-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
             	<div class='row'>
@@ -157,8 +159,8 @@
     </div>
 </template>
 
-<template name="pluginModal">
-    <div class="modal fade">
+<template name="pluginModal ">
+    <div class="modal fade"  data-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
             	<div class='row'>
@@ -167,6 +169,8 @@
             			<p>This allows the site to contact Google Scholar on your behalf.</p>
             			<p><a target='_blanck' href='https://chrome.google.com/webstore/detail/bgihejmgdhcaonifndbkdgbddbghefab'>Install by clicking here</a></p>
             			<hr/>
+            			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            			<br/><br/>
             		</div>
 
             	</div>

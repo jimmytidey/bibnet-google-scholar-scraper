@@ -94,3 +94,9 @@ table.dataTable.table-condensed > thead > tr > th {
   text-align: center;
   padding:1em 0;
 }
+
+.iframe { 
+  height:300px;
+  width:100%;
+  border: 1px solid black.
+} 
