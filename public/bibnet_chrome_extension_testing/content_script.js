@@ -1,5 +1,5 @@
 
-var server_url ='https://2065a265.ngrok.io/methods';
+var server_url ='https://2065a265.ngrok.io';
 
 /* allow normal js to see that the plugin is installed */ 
 if(window.location.href == 'http://localhost:3000/' || window.location.href == 'https://whocites.com'){
@@ -24,7 +24,7 @@ if(window.location.href.search('scholar.google')>0){
 	 	
 	 	var data = JSON.stringify(cite_obj);
 	 	var xhr = new XMLHttpRequest();
-	 	xhr.open("POST", server_url + '/addCitations', true);
+	 	xhr.open("POST", server_url + '/methods/addCitations', true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 		xhr.send(data);
 	}
@@ -40,7 +40,7 @@ if(window.location.href.search('scholar.google')>0){
 	 	
 	 	var data = JSON.stringify(cite_obj);
 	 	var xhr = new XMLHttpRequest();
-	 	xhr.open("POST", server_url + '/parsePublicationHTML', true);
+	 	xhr.open("POST", server_url + '/methods/parsePublicationHTML', true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 		xhr.send(data);		
 

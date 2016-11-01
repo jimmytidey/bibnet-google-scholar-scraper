@@ -68,6 +68,7 @@ mrt:cheerio@0.3.2
 npm-bcrypt@0.9.2
 npm-mongo@2.2.11_2
 observe-sequence@1.0.14
+okgrow:analytics@2.0.0
 ordered-dict@1.0.9
 peppelg:bootstrap-3-modal@1.0.4
 promise@0.8.8

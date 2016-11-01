@@ -2,9 +2,9 @@
 var server_url ='https://whocites.com';
 
 /* allow normal js to see that the plugin is installed */ 
-if(window.location.href == 'http://localhost:3000/' || window.location.href == 'https://whocites.com'){
+if(window.location.href == 'http://localhost:3000/' || window.location.href == 'https://whocites.com/' || window.location.href == 'https://whocites.com/'){
 	var plugin_is_installed=document.createElement("div");
-	plugin_is_installed.setAttribute("class", "bibnet_plugin_is_installed_v07");
+	plugin_is_installed.setAttribute("class", "bibnet_plugin_is_installed_v10");
 	document.getElementsByTagName("body")[0].appendChild(plugin_is_installed); 
 }
 
@@ -24,7 +24,7 @@ if(window.location.href.search('scholar.google')>0){
 	 	
 	 	var data = JSON.stringify(cite_obj);
 	 	var xhr = new XMLHttpRequest();
-	 	xhr.open("POST", server_url + '/addCitations', true);
+	 	xhr.open("POST", server_url + '/methods/addCitations', true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 		xhr.send(data);
 	}
@@ -40,7 +40,7 @@ if(window.location.href.search('scholar.google')>0){
 	 	
 	 	var data = JSON.stringify(cite_obj);
 	 	var xhr = new XMLHttpRequest();
-	 	xhr.open("POST", server_url + '/parsePublicationHTML', true);
+	 	xhr.open("POST", server_url + '/methods/parsePublicationHTML', true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 		xhr.send(data);		
 

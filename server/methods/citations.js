@@ -73,7 +73,9 @@ Meteor.methods({
 		bibnet.citation_search_array_filtered = []; // this array for citations searches that have not been carried out 
 
 		var publications = Publications.find({corpus_project_ids:project_id}).fetch();
+		console.log('pubs', publications.length);
 		var authors 	 = Authors.find({author_project_ids:project_id}).fetch(); 
+		console.log('pubs', authors.length);
 
 		_.each(publications, function(publication, pub_key){
 			_.each(authors, function(author, author_key){
