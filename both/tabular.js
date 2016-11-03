@@ -10,8 +10,6 @@ TabularTables.Authors = new Tabular.Table({
       project_ids.push(val._id); 
     });
 
-    console.log('project_ids', project_ids); 
-
     return {author_project_ids:{$in: project_ids}}
   }, 
   columns: [
@@ -29,7 +27,6 @@ TabularTables.Publications = new Tabular.Table({
       project_ids.push(val._id); 
     });
 
-    console.log('project_ids', project_ids); 
 
     return {corpus_project_ids:{$in: project_ids, }}
   },

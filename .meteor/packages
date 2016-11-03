@@ -30,9 +30,9 @@ peppelg:bootstrap-3-modal
 gwendall:auth-client-callbacks
 simple:rest
 gfk:server-messages
-okgrow:analytics
 kadira:blaze-layout
 kadira:flow-router
 useraccounts:bootstrap
 accounts-password
 meteorhacks:subs-manager
+okgrow:analytics

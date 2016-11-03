@@ -1,6 +1,6 @@
 {
   "name": "Who Cites?",
-  "version": "0.9",
+  "version": "1.0",
   "description": "Explore the academic citation network",
   "browser_action": {
       "default_title": "Who Cites?"

@@ -9,11 +9,11 @@ Meteor.methods({
 
 		var publications = Publications.find({corpus_project_ids:project_id}, {sort:{citation_count:-1}}).fetch();
 		var authors 	 = Authors.find({author_project_ids:project_id}).fetch(); 
-
+		var no_to_return = 40; 
 		
 
-		_.each(publications, function(publication, pub_key){
-			_.each(authors, function(author, author_key){
+		_.some(publications, function(publication, pub_key){
+			_.some(authors, function(author, author_key){
 				var url = 'https://scholar.google.com/scholar?as_vis=1&q='+ author.name + '&btnG=&hl=en&as_sdt=800005&sciodt=1%2C15&cites='+ publication.google_cluster_id + '&scipsc=1'
 				
 				var cite_search_obj = { 
@@ -23,7 +23,16 @@ Meteor.methods({
 				}; 
 
 				bibnet.citation_search_array.push(cite_search_obj)
+
+				if(bibnet.citation_search_array_filtered.length>no_to_return) { 
+					return true; 
+				}
+
 			}); 
+
+			if(bibnet.citation_search_array_filtered.length>no_to_return) { 
+				return true; 
+			}
 		}); 
 
 		//test to see which of these we've already searched 
@@ -35,7 +44,7 @@ Meteor.methods({
 				bibnet.citation_search_array_filtered.push(val); 
 			}
 
-			if(bibnet.citation_search_array_filtered.length>59) { 
+			if(bibnet.citation_search_array_filtered.length>no_to_return) { 
 				return true; 
 			}
 		});
@@ -67,7 +76,7 @@ Meteor.methods({
 	},	
 	countRemainingCitations: function (project_id) {
 		console.log('*******************************************')
-		console.log('Return Citations To Check '); 
+		console.log('Count remaining citations '); 
 		
 		bibnet.citation_search_array = []; 
 		bibnet.citation_search_array_filtered = []; // this array for citations searches that have not been carried out 
@@ -75,7 +84,11 @@ Meteor.methods({
 		var publications = Publications.find({corpus_project_ids:project_id}).fetch();
 		console.log('pubs', publications.length);
 		var authors 	 = Authors.find({author_project_ids:project_id}).fetch(); 
-		console.log('pubs', authors.length);
+		console.log('authors', authors.length);
+
+		if(authors.length * publications.length > 100) { 
+			return "More than 100";
+		}
 
 		_.each(publications, function(publication, pub_key){
 			_.each(authors, function(author, author_key){

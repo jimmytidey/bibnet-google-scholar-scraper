@@ -4,7 +4,7 @@ var server_url ='https://13b9c9de.ngrok.io';
 /* allow normal js to see that the plugin is installed */ 
 if(window.location.href == 'http://localhost:3000/' || window.location.href == 'https://whocites.com'){
 	var plugin_is_installed=document.createElement("div");
-	plugin_is_installed.setAttribute("class", "bibnet_plugin_is_installed_v07");
+	plugin_is_installed.setAttribute("class", "bibnet_plugin_is_installed_v10");
 	document.getElementsByTagName("body")[0].appendChild(plugin_is_installed); 
 }
 

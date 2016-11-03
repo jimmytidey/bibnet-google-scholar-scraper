@@ -25,20 +25,7 @@
 
   		<div class='row'>   		
 			
-			<div class='col-md-8 tables'>
-				<h4>Add Publications</h4>
 
-				<div class="input-group">
-					<input type="text" class="form-control publication_string" placeholder="Search for papers or books to add">
-					<span class="input-group-btn">
-						<button class="btn btn-secondary find-publication" type="button">Search</button>
-					</span>
-				</div>
-
-				<h4>Search results</h4>
-
-				{{> publicationSearchResults  }}
-			</div>
 
 			<div class='col-md-4 tables '>
 				<h4>Add citations</h4>
@@ -64,21 +51,39 @@
 				<button type="button" class="btn btn-default generate-cocitation-dot-file">Generate Cocitation .dot file</button>
 				<div class='gephi-results'></div>
 			</div>
+
+			<div class='col-md-8 tables'>
+				<h4>Add Publications</h4>
+
+				<div class="input-group">
+					<input type="text" class="form-control publication_string" placeholder="Search for papers or books to add">
+					<span class="input-group-btn">
+						<button class="btn btn-secondary find-publication" type="button">Search</button>
+					</span>
+				</div>
+
+				<h4>Search results</h4>
+
+				{{> publicationSearchResults  }}
+			</div>			
 				
 		</div>
 
 		<hr/>
 
   		<div class='row'> 
+
+			<div class='col-md-4 tables author-table'>
+				<h4>Authors</h4>
+				{{> tabular table=TabularTables.Authors selector=auth_selector class="table table-striped table-bordered table-condensed"}}	
+			</div>
+			  		
 			<div class='col-md-8 tables'>
 				
 				<h4>Publications</h4>
 				{{> tabular table=TabularTables.Publications selector=pub_selector class="table table-striped table-bordered table-condensed"}}
 			</div>  		
-			<div class='col-md-4 tables author-table'>
-				<h4>Authors</h4>
-				{{> tabular table=TabularTables.Authors selector=auth_selector class="table table-striped table-bordered table-condensed"}}	
-			</div>
+
 
 		</div>
 

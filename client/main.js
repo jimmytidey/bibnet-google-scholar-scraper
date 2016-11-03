@@ -5,7 +5,7 @@ import './main.html';
 Template.body.events({
 	'click .find-publication'(event) {
 		event.preventDefault();
-		//Meteor.call('clearSearch', Session.get('current_project'));
+		Meteor.call('clearSearch', Session.get('current_project'));
 		console.log('finding publications');
 		var search_string = $('.publication_string').val();
 		Meteor.parsePublications.searchPublications(search_string);
@@ -14,7 +14,7 @@ Template.body.events({
 	'keypress .publication_string': function (evt, template) {
 		
 		if (evt.which === 13) {
-			//Meteor.call('clearSearch', Session.get('current_project')); 
+			Meteor.call('clearSearch', Session.get('current_project')); 
 			console.log('finding publications');
 			var search_string = $('.publication_string').val();
 			Meteor.parsePublications.searchPublications(search_string); 
@@ -72,8 +72,14 @@ Template.body.events({
 
 Template.publicationSearchResults.helpers({
 	'searchResults': function (val) {
-		var proj_id = Session.get('current_project')	
-		var search_pubs = Publications.find({search_result_project_ids: proj_id});
+		var proj_id = Session.get('current_project')
+		
+		
+		if(typeof proj_id !== 'undefined') {
+			
+			Meteor.subscribe('pub_search_results', proj_id);
+		}
+		var search_pubs = Publications.find({search_result_project_ids: proj_id}, {limit:5});
 		return  search_pubs;
 	}
 });
@@ -128,7 +134,6 @@ Template.currentProject.events({
 Template.currentProject.helpers({
 	'currentProjectDoc': function (val) {
 		var current_project_doc = Projects.find({_id: Session.get('current_project')});
-		console.log('current_project_doc',current_project_doc.fetch());
 		return current_project_doc;
 	}
 });
@@ -139,16 +144,20 @@ Template.body.onRendered(function () {
 	if(!Meteor.userId()) {
 		Modal.show('loginModal');
 	} else {
-		if(Meteor.userId()) { 
-			Meteor.subscribe('projects', Meteor.userId(), function() {
-				var current_project = Projects.findOne({users: Meteor.userId()});
-				Session.set("current_project", current_project._id);
-			});
-		}
-
-		Meteor.call('countRemainingCitations',Session.get('current_project'), function(err, res){ 
-			$('.citation-count-result').html(res);
+		
+		Meteor.subscribe('projects', Meteor.userId(), function() {
+			var current_project = Projects.findOne({users: Meteor.userId()});
+			Session.set("current_project", current_project._id);
 		});
+		
+	  	Tracker.autorun(function () { 
+	  		if(typeof Session.get('current_project') !== 'undefined') {
+				Meteor.call('countRemainingCitations',Session.get('current_project'), function(err, res){ 
+					$('.citation-count-result').html(res);
+				});
+			}
+		});	
+
 	}
 });
 Accounts.onLogout(function() {
@@ -163,9 +172,7 @@ Accounts.onLogin(function() {
 		var current_project = Projects.findOne({users: Meteor.userId()});
 		Session.set("current_project", current_project._id);
   	});
-	Meteor.call('countRemainingCitations',Session.get('current_project'), function(err, res){ 
-		$('.citation-count-result').html(res);
-	});
+
 
 });
 
