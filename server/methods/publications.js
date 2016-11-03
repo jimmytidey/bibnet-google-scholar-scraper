@@ -27,7 +27,7 @@ Meteor.methods({
 		
 		Edges.find({type:'author', source:publication_id}).forEach(function(edge_doc){ 
 			
-			var other_pubs_with_this_author = Edges.find({type:'author', source: {$ne: publication_id}, target: edge_doc.target }).fetch(); 
+			var other_pubs_with_this_author = Publications.find({_id: {$ne: publication_id}, author_ids: edge_doc.target, corpus_project_ids:project_id }).fetch(); 
 			
 			console.log('other_pubs_with_this_author', other_pubs_with_this_author);
 
@@ -43,12 +43,16 @@ Meteor.methods({
 		Publications.update({_id: publication_id}, {$pop: {corpus_project_ids: project_id}});
 		 
 	},
-	parsePublicationHTML: function(html, user_id) { 
-		console.log('user_id for parsePublicationHTML', user_id);
-		bibnet.parsePublicationHTML(html, user_id) 
+	parsePublicationHTML: function(html, project_id) { 
+		console.log('user_id for parsePublicationHTML', project_id);
+		bibnet.parsePublicationHTML(html, project_id) 
 	}, 
-
-
+	clearSearch(proj_id) { 
+		console.log('clearing search results');
+		Publications.update({},{
+			$pull:{search_result_project_ids:proj_id}
+		}, {multi:true}); 
+	}
 });
 
 

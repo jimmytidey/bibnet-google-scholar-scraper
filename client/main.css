@@ -100,3 +100,11 @@ table.dataTable.table-condensed > thead > tr > th {
   width:100%;
   border: 1px solid black.
 } 
+
+.citation-count-group { 
+  margin-top:3px;
+}
+
+ .dataTables_processing { 
+   visibility: hidden;
+ }

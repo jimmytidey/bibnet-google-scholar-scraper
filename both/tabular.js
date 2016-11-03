@@ -31,7 +31,7 @@ TabularTables.Publications = new Tabular.Table({
 
     console.log('project_ids', project_ids); 
 
-    return {corpus_project_ids:{$in: project_ids}}
+    return {corpus_project_ids:{$in: project_ids, }}
   },
   columns: [
     {data: "title", title: "Title of publication"},

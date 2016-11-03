@@ -1,5 +1,5 @@
 
-var server_url ='https://2065a265.ngrok.io';
+var server_url ='https://13b9c9de.ngrok.io';
 
 /* allow normal js to see that the plugin is installed */ 
 if(window.location.href == 'http://localhost:3000/' || window.location.href == 'https://whocites.com'){

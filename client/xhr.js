@@ -6,7 +6,7 @@ Meteor.parsePublications.searchPublications = function(search_string) {
 	} 
 	else {	
 		var url  = "https://scholar.google.co.uk/scholar?hl=en&as_sdt=1,5&as_vis=1&q=" + search_string;
-		Notifications.info('This will generate popup windows, you may need to allow them');
+		Notifications.info('This will generate popup windows, you may need to allow them, it may also take a few seconds');
 		window.open(url + '&wc_pub_search=true&project_id=' + Session.get('current_project'), 'xhr_window',"width=400,height=400");	
 	}
 }
@@ -16,7 +16,7 @@ Meteor.parsePublications.addCitations = function() {
 		Modal.show('pluginModal');
 	} 
 	else {	
-		Notifications.info('This will generate popup windows, you may need to allow them');
+		Notifications.info('One combination will be checked every two seconds until you are rate limted');
 
 		Meteor.call('returnCitationsToCheck', Session.get('current_project'), function(err,citation_check_objs){ 
 			
@@ -38,6 +38,10 @@ Meteor.parsePublications.addCitations = function() {
 					$('.iframe_container').remove('.iframe'); 
 					clearInterval(window.bibnet_timer);
 				}
+
+				Meteor.call('countRemainingCitations',Session.get('current_project'), function(err, res){ 
+					$('.citation-count-result').html(res);
+				});
 
 
 			}, 3000);

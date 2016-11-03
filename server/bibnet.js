@@ -65,7 +65,8 @@ bibnet.addCitations = function (cite_search_obj) {
 		bibnet.parseCitation(i, cite_search_obj); 
 	}
 
-	serverMessages.notify('serverMessage:info', number_of_results + ' for ' + cite_search_obj.author_obj.name + ' citing ' + cite_search_obj.pub_obj.title.slice(0,40));
+	console.log(cite_search_obj);
+	serverMessages.notify('serverMessage:info', number_of_results + ' possible results for ' + cite_search_obj.author_obj.name + ' citing ' + cite_search_obj.publication_obj.title.slice(0,40));
 
 	if(!bibnet.isRateLimited()) {
 		Edges.insert({type:'citation_checked', source:cite_search_obj.publication_obj._id, target: cite_search_obj.author_obj._id});
@@ -110,6 +111,9 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 	if (!bibnet.isAuthorListing(item_number) && author_found !==-1) { 
 		
 		console.log('Found: ', surname)
+
+		serverMessages.notify('serverMessage:success',  cite_search_obj.author_obj.name + ' cites ' + cite_search_obj.publication_obj.title.slice(0,40));
+
 
 		target_publication_obj = bibnet.parsePublicationItem(item_number);
 		
