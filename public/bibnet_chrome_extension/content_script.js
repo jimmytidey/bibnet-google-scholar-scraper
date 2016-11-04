@@ -1,12 +1,8 @@
 
 var server_url ='https://whocites.com';
 
-/* allow normal js to see that the plugin is installed */ 
-if(window.location.href == 'http://localhost:3000/' || window.location.href == 'https://whocites.com/' || window.location.href == 'https://whocites.com/'){
-	var plugin_is_installed=document.createElement("div");
-	plugin_is_installed.setAttribute("class", "bibnet_plugin_is_installed_v10");
-	document.getElementsByTagName("body")[0].appendChild(plugin_is_installed); 
-}
+
+document.cookie = "wc_extension_version=1.1";
 
 
 if(window.location.href.search('scholar.google')>0){ 

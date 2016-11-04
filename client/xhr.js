@@ -1,7 +1,7 @@
 Meteor.parsePublications = {}; 
 
 Meteor.parsePublications.searchPublications = function(search_string) { 
-	if ($('.bibnet_plugin_is_installed_v10').length == 0){
+	if (document.cookie.indexOf('wc_extension_version') == -1){
 		Modal.show('pluginModal');
 	} 
 	else {	
@@ -12,7 +12,7 @@ Meteor.parsePublications.searchPublications = function(search_string) {
 }
 
 Meteor.parsePublications.addCitations = function() { 
-	if ($('.bibnet_plugin_is_installed_v10').length == 0){
+	if (document.cookie.indexOf('wc_extension_version') == -1){
 		Modal.show('pluginModal');
 	} 
 	else {	

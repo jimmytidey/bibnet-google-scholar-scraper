@@ -36,3 +36,4 @@ useraccounts:bootstrap
 accounts-password
 meteorhacks:subs-manager
 okgrow:analytics
+force-ssl
