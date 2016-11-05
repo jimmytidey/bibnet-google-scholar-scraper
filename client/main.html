@@ -45,7 +45,8 @@
 				<div class='iframe_container'></div>
 
 				<hr/>
-
+				<button type="button" class="btn btn-default showNetworkGraph">Visualise</button>
+				<hr/>
 				<h4>Export for gephi</h4>
 				<button type="button" class="btn btn-default generate-dot-file">Generate .dot file</button>
 				<button type="button" class="btn btn-default generate-cocitation-dot-file">Generate Cocitation .dot file</button>
@@ -87,7 +88,7 @@
 
 		</div>
 
-		{{> networkGraph }}
+		<div id='network_graph_container'> </div>
 	
 	</div>
 	
@@ -254,12 +255,16 @@
 	 {{/each}}
 </template>
 
+
+
 <template name="networkGraph">
-	<div class='row'>
-		<div class='col-md-12' id='network_graph_container'> 
-			
-		</div>
-	</div>
+    <div class="modal fade"  data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            	
+            </div>
+        </div>
+    </div>
 </template>
 
 

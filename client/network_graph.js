@@ -1,49 +1,69 @@
 
-function render_graph(_this){
-  console.log('network view div rendered, call made');
-  _this.loading.set(true)
-  Meteor.call('getAlchemyNetwork', Session.get("current_project"), function(err, res) {
-    _this.loading.set(false)
-    if (err) {
-      $('#network_graph_container').html(err.message);
-    }
+Meteor.renderGraph = function(){
+    console.log('network view div rendered, call made');
 
-    else {
-      $('#network_graph_container').css('background-color', 'black');
+    Meteor.call('networkVizData', Session.get("current_project"), function(err, res) {
+    console.log(res);
 
-      console.log(res);
-      alchemy.begin({
-        dataSource: res,
-        divSelector: '#network_graph_container',
-        nodeCaption: 'caption',
-        curvedEdges: true,
-
-        graphHeight: function(){return 400},
-        'nodeOverlap':150,
-        nodeStyle: {
-        "all": {
-            "radius": 10,
-            'nodeOverlap':250,
-            "borderColor": function (d) { return d._properties.colour},
-            "color": function (d) { return 'white'},
-            "captionColor": "#FFFFFF",
-            "captionBackground": null,
-            "captionSize": 12,
-            "selected": {
-                "color" : "#FFFFFF",
-                "borderColor": "#349FE3"
-            },
-            "highlighted": {
-                "color" : "#EEEEFF"
-            },
-            "hidden": {
-                "color": "none",
-                "borderColor": "none"
-            }
+        if (err) {
+          $('#network_graph_container').html(err.message);
         }
+
+        else {
+
+   var data =       {
+  "nodes": [
+    {
+      "id": "n0",
+      "label": "A node",
+      "x": 0,
+      "y": 0,
+      "size": 3
+    },
+    {
+      "id": "n1",
+      "label": "Another node",
+      "x": 3,
+      "y": 1,
+      "size": 2
+    },
+    {
+      "id": "n2",
+      "label": "And a last one",
+      "x": 1,
+      "y": 3,
+      "size": 1
     }
-      });
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "source": "n0",
+      "target": "n1"
+    },
+    {
+      "id": "e1",
+      "source": "n1",
+      "target": "n2"
+    },
+    {
+      "id": "e2",
+      "source": "n2",
+      "target": "n0"
     }
-  });
+  ]
+}
+
+            console.log(data)
+     
+            s = new sigma({
+              graph: res,
+              container: 'network_graph_container'
+            });
+
+            s.startForceAtlas2({worker: true, barnesHutOptimize: false});
+    
+        }
+    });
 
 }

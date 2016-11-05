@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import './main.html';
-
+ 
 Template.body.events({
 	'click .find-publication'(event) {
 		event.preventDefault();
@@ -65,6 +65,10 @@ Template.body.events({
 	},
 	'click .change-project': function(){
 		Modal.show('projectsModal');
+	},
+	'click .showNetworkGraph': function(){
+		//Modal.show('networkGraph');
+		Meteor.renderGraph();
 	}
 });
 
