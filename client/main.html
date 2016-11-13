@@ -16,7 +16,6 @@
   			</div>
   			 
 			<div class='col-md-1'>
-
   				<a type="button" class="logout">Logout</a>
   			</div>  			
   		</div>
@@ -25,8 +24,6 @@
 
   		<div class='row'>   		
 			
-
-
 			<div class='col-md-4 tables '>
 				<h4>Add citations</h4>
 
@@ -36,20 +33,22 @@
 
 				<button type="button" class="btn btn-default add-citations">Check Citations</button>
 				<br/>
+
 				<div class="btn-group citation-count-group" role="group" aria-label="...">
 				  <button type="button" class="btn btn-default citation-count">Citations left to check	</button>
 				  <button type="button" class="btn btn-default citation-count-result">Unknown</button>
-				 
 				</div>
 
 				<div class='iframe_container'></div>
 
 				<hr/>
-				<button type="button" class="btn btn-default showNetworkGraph">Visualise</button>
+				<button type="button" class="btn btn-default showNetworkGraph">Visualise author network</button>
 				<hr/>
+
 				<h4>Export for gephi</h4>
 				<button type="button" class="btn btn-default generate-dot-file">Generate .dot file</button>
-				<button type="button" class="btn btn-default generate-cocitation-dot-file">Generate Cocitation .dot file</button>
+				<button type="button" class="btn btn-default generate-cocitation-dot-file">Generate author .dot file</button>
+
 				<div class='gephi-results'></div>
 			</div>
 
@@ -88,7 +87,7 @@
 
 		</div>
 
-		<div id='network_graph_container'> </div>
+		
 	
 	</div>
 	
@@ -235,10 +234,7 @@
 							</span>
 						</div>
 
-						
-
-
-
+					
 						<br/>
      				</div>
 
@@ -258,10 +254,18 @@
 
 
 <template name="networkGraph">
-    <div class="modal fade"  data-backdrop="static">
-        <div class="modal-dialog">
+    <div class="modal fade"  >
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-            	
+		    	<div class="modal-header">
+		        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Network Visualisation</h4>
+		    	</div>            
+
+              	<div id='network_graph_container'> </div>
+            
+
+		    	<div class="modal-footer"></div>
             </div>
         </div>
     </div>

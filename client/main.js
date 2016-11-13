@@ -67,7 +67,7 @@ Template.body.events({
 		Modal.show('projectsModal');
 	},
 	'click .showNetworkGraph': function(){
-		//Modal.show('networkGraph');
+		Modal.show('networkGraph');
 		Meteor.renderGraph();
 	}
 });
@@ -164,6 +164,7 @@ Template.body.onRendered(function () {
 
 	}
 });
+
 Accounts.onLogout(function() {
 	Modal.show('loginModal');
 	Session.set('current_project', '');
@@ -176,10 +177,7 @@ Accounts.onLogin(function() {
 		var current_project = Projects.findOne({users: Meteor.userId()});
 		Session.set("current_project", current_project._id);
   	});
-
-
 });
-
 
 Template.pluginModal.events({
 	'click .plugin-installed': function(){ 

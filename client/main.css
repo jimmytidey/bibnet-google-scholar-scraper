@@ -110,9 +110,5 @@ table.dataTable.table-condensed > thead > tr > th {
  }
 
  #network_graph_container { 
-  height:600px;
-  min-height: 600px;
-  width:600px;
-  border:1px solid black;
-  position: absolute;
+  height:530px; 
 }

@@ -1,6 +1,6 @@
 
 Meteor.renderGraph = function(){
-    console.log('network view div rendered, call made');
+    Loading.configure({ color: '#123', elementSelector: '#network_graph_container'}).start();
 
     Meteor.call('networkVizData', Session.get("current_project"), function(err, res) {
     console.log(res);
@@ -11,57 +11,51 @@ Meteor.renderGraph = function(){
 
         else {
 
-   var data =       {
-  "nodes": [
-    {
-      "id": "n0",
-      "label": "A node",
-      "x": 0,
-      "y": 0,
-      "size": 3
-    },
-    {
-      "id": "n1",
-      "label": "Another node",
-      "x": 3,
-      "y": 1,
-      "size": 2
-    },
-    {
-      "id": "n2",
-      "label": "And a last one",
-      "x": 1,
-      "y": 3,
-      "size": 1
-    }
-  ],
-  "edges": [
-    {
-      "id": "e0",
-      "source": "n0",
-      "target": "n1"
-    },
-    {
-      "id": "e1",
-      "source": "n1",
-      "target": "n2"
-    },
-    {
-      "id": "e2",
-      "source": "n2",
-      "target": "n0"
-    }
-  ]
-}
-
-            console.log(data)
-     
+            Loading.stop();
+            
             s = new sigma({
               graph: res,
-              container: 'network_graph_container'
+              renderer: {
+                container: 'network_graph_container',
+                type: 'canvas'
+              },
+              settings: {
+                labelAlignment:'center',
+                labelThreshold:4
+              }
             });
 
-            s.startForceAtlas2({worker: true, barnesHutOptimize: false});
+            s.startForceAtlas2({worker: false, barnesHutOptimize: false});
+
+            setTimeout(function(){ 
+              s.stopForceAtlas2();
+              continueRender()
+            }, 2000);
+
+            function continueRender() { 
+              var noverlapListener = s.configNoverlap({
+                nodeMargin: 5,
+                scaleNodes: 1.05,
+                gridSize: 75,
+                easing: 'quadraticInOut', // animation transition function
+                duration: 100   // animation duration. Long here for the purposes of this example only
+              });
+              // Bind the events:
+              noverlapListener.bind('start stop interpolate', function(e) {
+                console.log(e.type);
+                if(e.type === 'start') {
+                  console.time('noverlap');
+                }
+                if(e.type === 'interpolate') {
+                  console.timeEnd('noverlap');
+                }
+              });
+              // Start the layout:
+              s.startNoverlap(); 
+
+              // Initialize the dragNodes plugin:
+              var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
+            }     
     
         }
     });
