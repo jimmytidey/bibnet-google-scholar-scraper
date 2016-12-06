@@ -47,7 +47,7 @@ Template.body.events({
 	'click .generate-cocitation-dot-file'(event)  {
 		event.preventDefault();
 		console.log('generating cocitation dot file');
-		Notifications.success('dot file processing');
+		Notifications.success('dot file processing.');
 		$('.dot-file').remove();
 		Meteor.call('generateCocitationDotFile', Session.get('current_project') , function(err, dotFile){ 
 			$('.gephi-results').append("<p>For now, you'll have to copy any paste this into a text file");
@@ -103,7 +103,7 @@ Template.publicationSearchResults.events({
 		$addToSet:{corpus_project_ids:Session.get('current_project')}
 	}); 
 
-	Notifications.success('Added ' + this.title + ' results');
+	Notifications.success('Added ' + this.title + ' results.');
 	var pub = Publications.findOne({_id : this._id});
 	
 	_.each(pub.author_ids, function(val,key) {
@@ -121,7 +121,7 @@ Template.deletePublication.events({
 	event.preventDefault();
 	console.log('delete publication ' + this._id);
 	Meteor.call('deletePublication', this._id, Session.get('current_project'), function(err,res){ 
-		Notifications.error('Publication deleted');
+		Notifications.error('Publication deleted.');
 	});  	
   }
 });
@@ -238,6 +238,13 @@ Meteor.startup(function () {
     _.extend(Notifications.defaultOptions, {
         timeout: 7000
     });
+
+    if(BrowserDetect.browser !=='Chrome') { 
+    	Notifications.error('You need to use Chrome for this website.', 'It requires a Google Chrome plugin');
+    	_.extend(Notifications.defaultOptions, {
+        	timeout: 50000
+    	});
+    }
 });
 
 

@@ -86,10 +86,6 @@ Meteor.methods({
 		var authors 	 = Authors.find({author_project_ids:project_id}).fetch(); 
 		console.log('authors', authors.length);
 
-		if(authors.length * publications.length > 100) { 
-			return "More than 100";
-		}
-
 		_.each(publications, function(publication, pub_key){
 			_.each(authors, function(author, author_key){
 				var url = 'https://scholar.google.com/scholar?as_vis=1&q='+ author.name + '&btnG=&hl=en&as_sdt=800005&sciodt=1%2C15&cites='+ publication.google_cluster_id + '&scipsc=1'
@@ -112,7 +108,15 @@ Meteor.methods({
 			if(!extant) { 
 				bibnet.citation_search_array_filtered.push(val); 
 			}
+			if (bibnet.citation_search_array_filtered.length > 50){ 
+				return true
+			}
 		});
+
+		if (bibnet.citation_search_array_filtered.length > 50){ 
+			return 'More than 50';
+		}
+		
 		return bibnet.citation_search_array_filtered.length;
 	}, 	
 

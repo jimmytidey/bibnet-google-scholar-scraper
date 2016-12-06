@@ -21,28 +21,52 @@ Meteor.renderGraph = function(){
               },
               settings: {
                 labelAlignment:'center',
-                labelThreshold:4
+                labelThreshold:1,
+                defaultLabelColor:'#fff',
+                minArrowSize:7,
+               
+                enableEdgeHovering: true,
+                edgeHoverColor: 'edge',
+                defaultEdgeHoverColor: '#000',
+              
+                edgeHoverExtremities: true,             
+                minNodeSize: 4,
+                maxNodeSize: 15                
               }
             });
 
-            s.startForceAtlas2({worker: false, barnesHutOptimize: false});
+            s.bind('hovers', function(e) {
+              
+              if(typeof e.data.current.edges[0]['tootip'] !== 'undefined') {
+               
+                $('.networkVizContext').html(e.data.current.edges[0]['tootip']);
+              }
+              
+            });           
 
-            setTimeout(function(){ 
-              s.stopForceAtlas2();
+            var frListener = sigma.layouts.fruchtermanReingold.configure(s, {
+              iterations: 500,
+              easing: 'quadraticInOut',
+              duration: 800
+            });
+            // Bind the events:
+            frListener.bind(' stop', function(e) {
               continueRender()
-            }, 2000);
+            });
+            // Start the Fruchterman-Reingold algorithm:
+            sigma.layouts.fruchtermanReingold.start(s);
 
             function continueRender() { 
               var noverlapListener = s.configNoverlap({
-                nodeMargin: 5,
+                nodeMargin: 20,
                 scaleNodes: 1.05,
-                gridSize: 75,
+                gridSize: 10,
                 easing: 'quadraticInOut', // animation transition function
                 duration: 100   // animation duration. Long here for the purposes of this example only
               });
               // Bind the events:
               noverlapListener.bind('start stop interpolate', function(e) {
-                console.log(e.type);
+
                 if(e.type === 'start') {
                   console.time('noverlap');
                 }

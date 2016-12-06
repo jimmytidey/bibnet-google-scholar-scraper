@@ -6,65 +6,56 @@ Meteor.methods({
     var edges   = []; 
     var nodes   = [];
     var pub_ids = [];
-    var citing_edges = [];
+    var pubs_in_corpus = [];
+    var citing_pubs = [];
+    var all_pubs = [];
+    var citation_edges = [];
 
+    //get all the pubs in this project
     Publications.find({corpus_project_ids:project_id}).forEach(function(pub_obj){ 
+      Meteor.networkViz.addPub(nodes, edges, pub_obj, true)
       pub_ids.push(pub_obj._id); 
-
-      author_array = authors.split(',');
-
-      _.each(author_array, function(outer,outer_key){ 
-        
-        //add author to node list
-        Meteor.networkViz.addAuthor(nodes, name);   
-
-        //give all coauthors with coauthor edges
-        _.each(author_array, function(inner, inner_key){ 
-          if (outer.target !== inner.target) { 
-          
-            var edge_obj = {
-                  "source": outer,
-                  "target": inner,
-                  "tootip": inner + ' coauthored <br/><em>' + pub_obj.title + '</em><br/> with ' + outer,
-                  "link_type": "coauthorship",
-                  "color": "#d7191c",
-                  type: 'curvedArrow',
-                  "id": Math.floor(100000 + Math.random() * 900000000).toString()
-                };
-
-            edges.push(edge_obj); 
-          }
-        }); 
-      });
+      all_pubs.push(pub_obj);
     }); 
 
  
-    //get every paper that cites one the papers in this project
+    //get ids of all the pubs that cite pubs in this project
     Edges.find({target:{$in:pub_ids}, type:'cites'}).forEach(function(cite_edge_val){
-      var edge = cite_edge_val.source + ' -> ' + cite_edge_val.target + ' [edge_type=cites]\n' ;
-      citing_pubs.push(cite_edge_val.source); 
-      citing_edges.push(cite_edge_val);
+      citing_pubs.push(cite_edge_val.source);
+      citation_edges.push(cite_edge_val)
     });
 
+    //get documents for all the pubs that 
+    Publications.find({_id:{$in:citing_pubs}}).forEach(function(pub_obj){ 
+      Meteor.networkViz.addPub(nodes, edges, pub_obj, false);
+      all_pubs.push(pub_obj);
+    });
+    
+    //do a 'manual join', adding source and target pub docs to each edge doc
+    _.each(citation_edges, function(val, key){
+      
+      var source = _.find(all_pubs, function(obj) { return obj._id == val.source }) 
+      var target = _.find(all_pubs, function(obj) { return obj._id == val.target }) 
+      var source_author_array = source.authors.split(',');
+      var target_author_array = target.authors.split(',');
 
-    Publications.find({_id: {$in: citing_pub_ids}}).forEach(function(pub_obj){
-      author_array = authors.split(',');
-
-      _.each(author_array, function(outer,outer_key){ 
-        
-        //add author to node list
-        Meteor.networkViz.addAuthor(nodes, name);   
-
+      _.each(source_author_array, function(source_author,outer_key){ 
         //give all coauthors with coauthor edges
-        _.each(author_array, function(inner, inner_key){ 
-          if (outer.target !== inner.target) { 
+
+       
+
+        _.each(target_author_array, function(target_author, inner_key){
+
+          Meteor.networkViz.addAuthor(nodes, target_author, true);
+          
+          if (source_author !== target_author) { 
           
             var edge_obj = {
-                  "source": outer,
-                  "target": inner,
-                  "tootip": inner + ' coauthored <br/><em>' + pub_obj.title + '</em><br/> with ' + outer,
-                  "link_type": "coauthorship",
-                  "color": "#d7191c",
+                  "source": source_author,
+                  "target": target_author,
+                  "tootip": source_author + ' cites ' + target_author + ' in <em>' + target.title + '</em>',
+                  "link_type": "cites",
+                  "color": "#99d594",
                   type: 'curvedArrow',
                   "id": Math.floor(100000 + Math.random() * 900000000).toString()
                 };
@@ -74,37 +65,13 @@ Meteor.methods({
         }); 
       });
 
-      //have to make an edges for each citation this paper makes
-      var citation_edges = _.filter(citing_edges, function(edge){ 
-        edge.source = pub_obj._id
-      }); 
-      
-      _.each(citation_edges, function(edge){ 
-        if (outer.target !== inner.target) { 
-        
-          var edge_obj = {
-                "source": edge.source,
-                "target": edge.target,
-                "tootip": inner + ' coauthored <br/><em>' + pub_obj.title + '</em><br/> with ' + outer,
-                "link_type": "coauthorship",
-                "color": "#d7191c",
-                type: 'curvedArrow',
-                "id": Math.floor(100000 + Math.random() * 900000000).toString()
-              };
 
-          edges.push(edge_obj); 
-        }
+    });    
 
-
-    }    
-
-    
     var ret = {
       "nodes": nodes,
       "edges": edges
     };
-
-    console.log(ret);
     
     return ret; 
   }
@@ -112,24 +79,67 @@ Meteor.methods({
 
 Meteor.networkViz = {};
 
-Meteor.networkViz.addAuthor = function(existing_nodes, name) { 
+Meteor.networkViz.addAuthor = function(existing_nodes, name, in_corpus) { 
 
   var extant = _.find(existing_nodes, function(node) {
-    if (node.name == name){ 
-      node.size++; 
-    } 
+  
+    if (node.id == name){ 
+      node.size = node.size+1; 
+      if(in_corpus){
+        node.color = '#ef8a62';
+      }
+      
+      return true
+    } else { 
+      return false
+    }
   });
+  
 
   if(typeof extant == 'undefined') {
     new_node = {};
     new_node.id = name; 
-    new_node.label = name 
-    new_node.color = '#666';
-    new_node.size = 15;
+    new_node.label = name;
+    new_node.color = '#af8dc3';
+    new_node.size = 1;
     new_node.x = Math.floor(Math.random() * 10);
     new_node.y = Math.floor(Math.random() * 10);
+
+    if(in_corpus){
+        new_node.color = '#ef8a62';
+    }    
     existing_nodes.push(new_node);
   } 
+} 
+
+
+
+Meteor.networkViz.addPub = function(existing_nodes, exising_edges, pub_obj, in_corpus) {
+  author_array = pub_obj.authors.split(',');
+  
+  _.each(author_array, function(outer,outer_key){ 
+    
+    //add author to node list
+    Meteor.networkViz.addAuthor(existing_nodes, outer, in_corpus);   
+
+    //give all coauthors with coauthor edges
+    _.each(author_array, function(inner, inner_key){ 
+      if (outer !== inner) { 
+      
+        var edge_obj = {
+              "source": outer,
+              "target": inner,
+              "tootip": inner + ' coauthored <em>' + pub_obj.title + '</em> with ' + outer,
+              "link_type": "coauthorship",
+              "color": "#67a9cf",
+              type: 'curvedArrow',
+              "id": Math.floor(100000 + Math.random() * 900000000).toString()
+            };
+        
+        exising_edges.push(edge_obj); 
+      }
+    }); 
+  });
 } 
 
 

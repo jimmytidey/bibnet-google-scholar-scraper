@@ -80,7 +80,7 @@ table.dataTable.table-condensed > thead > tr > th {
   padding-top:15px;
 }
 
- .logout { 
+ .logout_container { 
   float:right;
   padding-top:15px;
 }
@@ -110,5 +110,30 @@ table.dataTable.table-condensed > thead > tr > th {
  }
 
  #network_graph_container { 
-  height:530px; 
+  height:520px; 
+  background-color: black;
 }
+
+.modal-footer { 
+  text-align:left;
+}
+
+.modal-title { 
+  padding:0px;
+}
+
+.demo_image { 
+  width:100%;
+  padding:10px;
+}
+
+.demo_image_container { 
+  text-align: center;
+}
+
+
+.networkVizKey .node_in_corpus {color:#ef8a62!important;}
+.networkVizKey .node_cites {color:#af8dc3!important;}
+.networkVizKey .edge_cites {color:#99d594!important;}
+.networkVizKey .edge_coauth {color:#67a9cf!important;}
+

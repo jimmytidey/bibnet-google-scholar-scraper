@@ -54,23 +54,24 @@ bibnet.parsePublicationHTML = function(html, project_id) {
 
 bibnet.addCitations = function (cite_search_obj) { 
 	
-
 	$ = cheerio.load(cite_search_obj.html);
 	
 	var number_of_results = $('#gs_ccl_results > div').length; 
 	console.log('number_of_results ------------------->', number_of_results); 
-
 
 	for(var i=1; i<=number_of_results; i++) {
 		bibnet.parseCitation(i, cite_search_obj); 
 	}
 
 	console.log(cite_search_obj);
-	serverMessages.notify('serverMessage:info', number_of_results + ' possible results for ' + cite_search_obj.author_obj.name + ' citing ' + cite_search_obj.publication_obj.title.slice(0,40));
+	serverMessages.notify('serverMessage:info', number_of_results + ' possible results for ' + cite_search_obj.author_obj.name + ' citing ' + cite_search_obj.publication_obj.title.slice(0,40) +" ______" + cite_search_obj.project_id);
 
 	if(!bibnet.isRateLimited()) {
 		Edges.insert({type:'citation_checked', source:cite_search_obj.publication_obj._id, target: cite_search_obj.author_obj._id});
+	} else { 
+		serverMessages.notify('serverMessage:error', 'Rate limit! ______' + cite_search_obj.project_id, "You'll have to solve a captcha in the popup window" );
 	}
+
 
 }
 
@@ -80,7 +81,7 @@ bibnet.isRateLimited = function() {
 		Meteor.clearInterval(bibnet.paperSearchTimer);
 		console.log('Google hates you'); 
 		console.log($('#gs_captcha_f').html());
-		serverMessages.notify('serverMessage:error', 'Rate limit!', "You'll have to solve a captcha in the popup window");
+		
 		return true 
 	} else {
 		return false 
@@ -112,7 +113,7 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 		
 		console.log('Found: ', surname)
 
-		serverMessages.notify('serverMessage:success',  cite_search_obj.author_obj.name + ' cites ' + cite_search_obj.publication_obj.title.slice(0,40));
+		serverMessages.notify('serverMessage:success',  cite_search_obj.author_obj.name + ' cites ' + cite_search_obj.publication_obj.title.slice(0,40) + " ______" + cite_search_obj.project_id);
 
 
 		target_publication_obj = bibnet.parsePublicationItem(item_number);
