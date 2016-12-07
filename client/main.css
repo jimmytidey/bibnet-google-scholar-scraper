@@ -124,7 +124,12 @@ table.dataTable.table-condensed > thead > tr > th {
 
 .demo_image { 
   width:100%;
-  padding:10px;
+  padding:8px;
+}
+
+
+.login-info { 
+  margin-left:6px;
 }
 
 .demo_image_container { 
