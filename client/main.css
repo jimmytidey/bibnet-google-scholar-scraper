@@ -1,6 +1,6 @@
 textarea { 
-  width:100%;
-  height: 300px;
+  width:80%;
+  height: 2em;
 } 
 
  .tables td {
@@ -20,4 +20,125 @@ textarea {
   -webkit-hyphens: auto;
   hyphens: auto;
 }
+
+ul.notifications {
+  position: fixed;
+}
+
+.search-result-title, .search-result-authors { 
+  width:30%;
+} 
+
+/*making tables work reasonable */ 
+.author-table .col-sm-5, .author-table .col-sm-7 { 
+  width:100%;
+  float:left;
+}
+.author-table .dataTables_paginate { 
+  text-align: left!important;
+}
+
+table.dataTable.table-condensed > thead > tr > th {
+    padding-right: 7px;
+}
+
+#DataTables_Table_1 > thead > tr > th:nth-child(2) { 
+  width:25px!important;
+ }
+
+#DataTables_Table_1 > thead > tr > th:nth-child(3) { 
+  width:25px!important;
+} 
+
+#DataTables_Table_1 > thead > tr > th:nth-child(4) { 
+  width:25px!important;
+} 
+
+#DataTables_Table_1 > thead > tr > th:nth-child(5) { 
+  width:25px!important;
+} 
+
+#DataTables_Table_0_length > label > select { 
+  width:45px;
+}
+
+#DataTables_Table_1_filter > label > input { 
+  width:100px;
+ }
+
+.pagination > li > a { 
+  padding:6px 8px;
+}
+
+.pubsearchresults { 
+  max-height: 300px;
+  overflow: auto;
+  border:1px solid #ccc;
+ }
+
+.project-status { 
+  padding-top:15px;
+}
+
+ .logout_container { 
+  float:right;
+  padding-top:15px;
+}
+
+.dot-file { 
+  height:5em;
+  width:100%;
+ }
+
+ .modal-title { 
+  text-align: center;
+  padding:1em 0;
+}
+
+.iframe { 
+  height:300px;
+  width:100%;
+  border: 1px solid black.
+} 
+
+.citation-count-group { 
+  margin-top:3px;
+}
+
+ .dataTables_processing { 
+   visibility: hidden;
+ }
+
+ #network_graph_container { 
+  height:520px; 
+  background-color: black;
+}
+
+.modal-footer { 
+  text-align:left;
+}
+
+.modal-title { 
+  padding:0px;
+}
+
+.demo_image { 
+  width:100%;
+  padding:8px;
+}
+
+
+.login-info { 
+  margin-left:6px;
+}
+
+.demo_image_container { 
+  text-align: center;
+}
+
+
+.networkVizKey .node_in_corpus {color:#ef8a62!important;}
+.networkVizKey .node_cites {color:#af8dc3!important;}
+.networkVizKey .edge_cites {color:#99d594!important;}
+.networkVizKey .edge_coauth {color:#67a9cf!important;}
 

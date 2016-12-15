@@ -20,11 +20,24 @@ AuthorsSchema = new SimpleSchema({
     label: "target",
     optional:true,    
   },
-  "distance": { 
-    type: Number,
-    label: 'Distance', 
-    defaultValue: 20
-  }
+  "author_project_ids": {
+    type: [String],
+    label: "target",
+    optional:true,    
+  },
+  "exclude_in_citation_search": {
+      type: [String],
+      label: "Exclude in citation search",
+      optional:true
+  }   
 });
 
 Authors.attachSchema( AuthorsSchema ); 
+
+Authors.allow({
+    update: function(userId, doc) {
+       if(userId){
+          return true
+       }
+    }
+})

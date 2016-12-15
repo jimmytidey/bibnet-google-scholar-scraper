@@ -6,17 +6,10 @@ bibnet = {};
 
 bibnet.setupRequest =function() {
 	var connection; 
-	//set up a request object that we can use to get stuff from scholar 
-	bibnet.user_agents = [
-		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
-		'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36',
-		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36',
-		'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.32 (KHTML, like Gecko) Chrome/27.0.1421.0 Safari/537.32',
-		'Mozilla/5.0 (Windows NT 6.1; rv:11.0) Gecko/20100101 Firefox/11.0',
-		'Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) Gecko/20100101 Firefox/7.0.1'
-	]
 
-	if(Math.random() > 1) { 
+	var use_cookies = false;
+
+	if(use_cookies) { 
 		console.log('request with cookies');
 
 		bibnet.cookie_jar = request.jar();
@@ -26,17 +19,12 @@ bibnet.setupRequest =function() {
 			var cookie = request.cookie(cookie);
 			bibnet.cookie_jar.setCookie(cookie, 'https://scholar.google.co.uk');
 		})
-
 		connection = request.defaults({
-			headers: { "User-Agent": _.sample(bibnet.user_agents) },
 			jar:bibnet.cookie_jar
 		});
 	} else { 
 		console.log('request without cookies');
-
-		connection = request.defaults({
-		
-		});
+		connection = request.defaults();
 	}
 
 	return connection;
@@ -48,45 +36,42 @@ bibnet.SearchForPublications = function(search_string) {
 	
 	var connection = bibnet.setupRequest(); 
 	var result = connection.getSync(url);
-	
-	$ = cheerio.load(result.body);
+	bibnet.parsePublicationHTML(result.body);
+
+}
+
+bibnet.parsePublicationHTML = function(html, project_id) { 
+	$ = cheerio.load(html);
 	
 	var number_of_results = $('#gs_ccl_results > div').length;  
 	console.log('number_of_results ', number_of_results); 
 
 	for(var i=1; i<=number_of_results; i++) {
 		
-		bibnet.parsePublication(i); 
+		bibnet.parsePublication(i, project_id); 
 	}
 }
 
 bibnet.addCitations = function (cite_search_obj) { 
 	
-	var connection = bibnet.setupRequest(); 
-	var result = connection.getSync(cite_search_obj.url);
-
-	console.log('--------------------------------------------------------------------')
-	console.log('--------------------------------------------------------------------')
-	console.log('Publication: ', cite_search_obj.publication_obj.title);
-	console.log('testing for citations by ', cite_search_obj.author_obj.name)
-
-	$ = cheerio.load(result.body);
+	$ = cheerio.load(cite_search_obj.html);
 	
 	var number_of_results = $('#gs_ccl_results > div').length; 
 	console.log('number_of_results ------------------->', number_of_results); 
-
-	if(number_of_results ==0) { 
-		//console.log($('body').html().substring(0,3000));
-	}
-
 
 	for(var i=1; i<=number_of_results; i++) {
 		bibnet.parseCitation(i, cite_search_obj); 
 	}
 
+	console.log(cite_search_obj);
+	serverMessages.notify('serverMessage:info', number_of_results + ' possible results for ' + cite_search_obj.author_obj.name + ' citing ' + cite_search_obj.publication_obj.title.slice(0,40) +" ______" + cite_search_obj.project_id);
+
 	if(!bibnet.isRateLimited()) {
 		Edges.insert({type:'citation_checked', source:cite_search_obj.publication_obj._id, target: cite_search_obj.author_obj._id});
+	} else { 
+		serverMessages.notify('serverMessage:error', 'Rate limit! ______' + cite_search_obj.project_id, "You'll have to solve a captcha in the popup window" );
 	}
+
 
 }
 
@@ -96,6 +81,7 @@ bibnet.isRateLimited = function() {
 		Meteor.clearInterval(bibnet.paperSearchTimer);
 		console.log('Google hates you'); 
 		console.log($('#gs_captcha_f').html());
+		
 		return true 
 	} else {
 		return false 
@@ -117,6 +103,9 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 	// check that this result really is a citation of the author in question
 	var author_names 	= $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri .gs_a ').text(); 
 	var surname 		= cite_search_obj.author_obj.name.split(' ')[1];
+	var success			=false
+	console.log(cite_search_obj.author_obj);
+
 	
 	var author_found 	= author_names.search(surname);
 
@@ -124,8 +113,11 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 		
 		console.log('Found: ', surname)
 
+		serverMessages.notify('serverMessage:success',  cite_search_obj.author_obj.name + ' cites ' + cite_search_obj.publication_obj.title.slice(0,40) + " ______" + cite_search_obj.project_id);
+
+
 		target_publication_obj = bibnet.parsePublicationItem(item_number);
-		target_publication_obj.distance = item_number + 20;
+		
 
 		var author_string 		= $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > div.gs_a ').text().split('-')[0];
 		
@@ -133,30 +125,41 @@ bibnet.parseCitation = function(item_number, cite_search_obj) {
 
 		_.each(author_array, function(val, key){
 
-		var cleaned_name = val.replace('…', '')
-		cleaned_name = cleaned_name.trim()
+			var cleaned_name = val.replace('…', '')
+			cleaned_name = cleaned_name.trim()
 
 			source_author_obj = { 
 				name: cleaned_name,
-				distance: item_number + 20
+				project_id: cite_search_obj.project_id
 			}
 			if (source_author_obj.name !== '') {
 				bibnet.insertAuthorship(target_publication_obj, source_author_obj)
 			}
+
+			//add this project to the author 
+			//Authors.update({name:cleaned_name}, {$push:{author_project_ids: cite_search_obj.project_id}})
+
 		});
 
 		source_publication_obj 	= Publications.findOne({google_cluster_id: target_publication_obj.google_cluster_id}); 
 
+		//add the publication to the author
+		//Publications.update({google_cluster_id: target_publication_obj.google_cluster_id}, {$push:{corpus_project_ids:cite_search_obj.project_id}}); 
+
 		target_publication_obj 	= cite_search_obj.publication_obj; 
+
 		bibnet.insertCitation(source_publication_obj, target_publication_obj); 
+		success = true;
 	}
 	else {
-
+		//serverMessages.notify('serverMessage:info', surname + ' does not cite ' + target_publication_obj.title.slice(0,40));
 		console.log('does not contain: ', surname)
 	}
+
+	return success; 
 } 
 
-bibnet.parsePublication = function(item_number) { 
+bibnet.parsePublication = function(item_number, project_id) { 
 
 	if(bibnet.isRateLimited()) { 
 		console.log('google hates you')
@@ -179,7 +182,7 @@ bibnet.parsePublication = function(item_number) {
 		};
 		
 		if (target_author_obj.name !== '') {
-			bibnet.insertAuthorship(source_publication_obj, target_author_obj)
+			bibnet.insertAuthorship(source_publication_obj, target_author_obj, project_id)
 		}
 	});
 }
@@ -191,11 +194,13 @@ bibnet.parsePublicationItem = function (item_number) {
 		return false
 	}
 	try {
-		var title  			   = $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri h3  a').text();
-		var cluster 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri .gs_fl  a:nth-child(1)').attr('href');
-		var date			   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_a').text().split('-')[1].slice(-5));
-		var citation_count	   = parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ri .gs_fl a:first-child').text().split('by ')[1]);
-		var pdf_link 		   = $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ggsd a').attr('href'); 
+		var title  			   	= $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri h3  a').text();
+		var cluster 		   	= $('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri .gs_fl  a:nth-child(1)').attr('href');
+		var date			   	= parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_a').text().split('-')[1].slice(-5));
+		var citation_count	   	= parseInt($('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ri .gs_fl a:first-child').text().split('by ')[1]);
+		var pdf_link 		   	= $('#gs_ccl_results > div:nth-child(' + item_number + ') .gs_ggsd a').attr('href'); 
+		var author_string 	 	= $('#gs_ccl_results > div:nth-child(' + item_number + ') > div.gs_ri > div.gs_a ').text().split('-')[0];
+
 	} catch (e){
 		console.log(e)
 		console.log($('#gs_ccl_results > div:nth-child(' + item_number + ')  .gs_ri').html())
@@ -228,7 +233,8 @@ bibnet.parsePublicationItem = function (item_number) {
 		google_cluster_id: cluster,
 		publication_date: new Date(date+'-01-01'),
 		citation_count: citation_count,
-		pdf_link: pdf_link
+		pdf_link: pdf_link, 
+		authors: author_string
 	}
 
 	return target_publication_obj; 	
@@ -248,26 +254,34 @@ bibnet.insertCitation = function(source_publication_obj, target_publication_obj)
 		console.log('Already in DB  - ' + source_publication_obj.title.slice(0,40)  + ' cites '  + target_publication_obj.title.slice(0,40))
 	} else { 
 		console.log('Adding citation  - ' + source_publication_obj.title.slice(0,40)  + ' cites '  + target_publication_obj.title.slice(0,40))
+		
 		Edges.insert(edge_obj);
 	}
 
 }
 
-bibnet.insertAuthorship = function(source_publication_obj, target_author_obj) { 
+bibnet.insertAuthorship = function(source_publication_obj, target_author_obj, project_id) { 
 
-	var source_publication_id = bibnet.insertPublication(source_publication_obj);
 	var target_author_id = bibnet.insertAuthor(target_author_obj);
+	var source_publication_id = bibnet.insertPublication(source_publication_obj);
+	
+	Publications.update({_id: source_publication_id}, {$addToSet:{author_ids:target_author_id, search_result_project_ids:project_id}});
+	
 
 	var edge_obj = {type:'author', source: source_publication_id, target: target_author_id }
 
 	extant = Edges.findOne(edge_obj);
 
 	if(extant) { 
+		var created = false; 
 		//console.log('Authorship edge already in DB  - ' + source_publication_obj.title  + ' written by '  + target_author_obj.name)
 	} else { 
 		console.log('Adding authorship edge - ' + source_publication_obj.title  + ' written by '  + target_author_obj.name)
 		Edges.insert(edge_obj);
+		var created = true; 
 	}
+
+	return created;
 }
 
 bibnet.insertPublication = function(publication_obj) { 
@@ -276,7 +290,7 @@ bibnet.insertPublication = function(publication_obj) {
 	if(extant) { 
 		//console.log('Publication already in DB: ')
 		//console.log(publication_obj.title.slice(0,40))
-		return extant._id 
+		return extant._id
 	}
 	else {
 		console.log('Adding publication to DB: ')
@@ -299,7 +313,7 @@ bibnet.insertAuthor = function(author_obj) {
 	else {
 	   console.log('inserting author object:')
 	   console.log(author_obj.name);
-		Authors.insert(author_obj);
+		Authors.insert(author_obj)	;
 		var author = Authors.findOne({name: author_obj.name }); 
 		return author._id;
 	}

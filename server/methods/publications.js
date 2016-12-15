@@ -3,16 +3,6 @@ Meteor.methods({
 		
 		console.log('find papers called'); 
 
-		//list_of_papers = 'ostrom governing the commons \n mancur olson the logic of collective action \n ostrom and hess'
-		/* 
-
-		steven lukes power a radical view
-		amartya sen the idea of justice
-		ostrom governing the commons 
-		mancur olson the logic of collective action 
-		gordon tullock the calculus of consent
-		*/ 
-
 		bibnet.list_of_papers = list_of_papers.split(/\n/)
 
 		bibnet.paperSearchTimer = Meteor.setInterval(function(){
@@ -31,28 +21,38 @@ Meteor.methods({
 			}
 		}, (Math.random() * 10000) + 2000) 
 	},
-	deletePublication: function(publication_id) { 
+	deletePublication: function(publication_id, project_id) { 
 
+		console.log('deletePublication called');
+		
 		Edges.find({type:'author', source:publication_id}).forEach(function(edge_doc){ 
 			
-			var other_pubs_with_this_author = Edges.find({type:'author', source: {$ne: publication_id}, target: edge_doc.target }).fetch(); 
+			var other_pubs_with_this_author = Publications.find({_id: {$ne: publication_id}, author_ids: edge_doc.target, corpus_project_ids:project_id }).fetch(); 
 			
 			console.log('other_pubs_with_this_author', other_pubs_with_this_author);
 
 			if(other_pubs_with_this_author.length ===0) { 
 				console.log('removing author ',  edge_doc.target);
-				Authors.remove({_id: edge_doc.target})
+				Authors.update({_id: edge_doc.target}, {$pop: {author_project_ids: project_id}})
 			}
 			else { 	
 				console.log('this author is authored another publication',  edge_doc.target)
 			}
-			
-
 		})
 
-		Edges.remove({type:'author', source:publication_id});
-
-		Publications.remove({_id: publication_id});
-
+		Publications.update({_id: publication_id}, {$pop: {corpus_project_ids: project_id}});
+		 
+	},
+	parsePublicationHTML: function(html, project_id) { 
+		console.log('user_id for parsePublicationHTML', project_id);
+		bibnet.parsePublicationHTML(html, project_id) 
+	}, 
+	clearSearch(proj_id) { 
+		console.log('clearing search results');
+		Publications.update({},{
+			$pull:{search_result_project_ids:proj_id}
+		}, {multi:true}); 
 	}
 });
+
+
