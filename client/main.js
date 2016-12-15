@@ -36,6 +36,14 @@ Template.body.events({
 			$('.dot-file').val(dotFile);
 		});
 	}, 	
+	'click .generate-citation-list'(event)  {
+		event.preventDefault();
+		console.log('generating citation list');
+		Meteor.call('generateCitationList', function(err, dotFile){ 
+			console.log('dot file returned');
+			$('.dot-file').val(dotFile);
+		});
+	}, 		
 });
 
 
