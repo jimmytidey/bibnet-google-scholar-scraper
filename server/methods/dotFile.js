@@ -81,13 +81,8 @@ Meteor.methods({
 			
 			//check for coauthorship of this publication
 			var author_array = Edges.find({type:'author',source:pub_obj._id}).fetch();
-<<<<<<< HEAD
-
-			/*
-=======
 			console.log('-->pub_obj._id', pub_obj._id);
 
->>>>>>> cc04403fd36dd97bee142d70505e4e8cc002a6bb
 			_.each(author_array, function(outer){ 
 				_.each(author_array, function(inner){ 
 					if (outer.target !== inner.target) { 
@@ -101,8 +96,7 @@ Meteor.methods({
 					nodes.push(author_string); 
 				});
 			});
-			*/
-
+			
 			//section to find authors who cite this publication 
 			var citing_author_array = [];
 			
@@ -147,54 +141,5 @@ Meteor.methods({
 	}, 
 	getAlchemyNetwork: function(project_id) { 
 
-	}
-});
-
-Meteor.methods({
-	generateCitationList: function () {
-		console.log('generating citation list')
-		 
-		var edges = []; 
-		
-
-		Publications.find().forEach(function(pub_obj){ 
-			
-			var author_array = Edges.find({type:'author',source:pub_obj._id}).fetch();
-
-
-			//section to find authors who cite this publication 
-			var citing_author_array = [];
-
-			//find publications that cite this publication 
-			Edges.find({type:'cites',target:pub_obj._id}).forEach(function(citing_pub_edge) { 
-				
-				var citing_pub_details = Publications.findOne({_id: citing_pub_edge.source});
-
-				//find authors who wrote those citing publication
-				Edges.find({type:'author', source:citing_pub_edge.source}).forEach(function(citing_author_obj) { 
-					citing_author_array.push({author: citing_author_obj.target, cited_pub_details:pub_obj, citing_pub_details: citing_pub_details}); 
-				}); 
-			}); 
-
-			//make each citing author cite every author of the original publication, if there are any 
-			if(citing_author_array.length>0) {
-				
-				_.each(citing_author_array, function(citing_author){ 
-					_.each(author_array, function(author){
-						var citing_author_details = Authors.findOne({_id: citing_author.author}); 
-						var cited_author_details  = Authors.findOne({_id: author.target});  
-						
-						var edge_string = citing_author_details.name +"'s " + citing_author.citing_pub_details.title + ' --- cites --> ' + cited_author_details.name + "'s "+ citing_author.cited_pub_details.title +' \n' ;
-						edges.push(edge_string); 
-					}); 
-				}); 
-			}
-		}); 
-
-		var all_edges_string = edges.join('\n\n');
-		console.log(all_edges_string);
-		var ret =  all_edges_string; 
-		
-		return ret; 
 	}
 });

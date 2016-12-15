@@ -55,17 +55,6 @@ Template.body.events({
 			
 			$('.dot-file').val(dotFile);
 		});
-<<<<<<< HEAD
-	}, 	
-	'click .generate-citation-list'(event)  {
-		event.preventDefault();
-		console.log('generating citation list');
-		Meteor.call('generateCitationList', function(err, dotFile){ 
-			console.log('dot file returned');
-			$('.dot-file').val(dotFile);
-		});
-	}, 		
-=======
 	},
 	'click .logout': function(){
 		event.preventDefault();
@@ -97,7 +86,6 @@ Template.publicationSearchResults.helpers({
 		var search_pubs = Publications.find({search_result_project_ids: proj_id}, {limit:5});
 		return  search_pubs;
 	}
->>>>>>> cc04403fd36dd97bee142d70505e4e8cc002a6bb
 });
 
 Template.publicationSearchResults.events({
@@ -267,7 +255,6 @@ Template.registerHelper(
 		return  val.getFullYear();
 	}
 );
-
 
 
 
