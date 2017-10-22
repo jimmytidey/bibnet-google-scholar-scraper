@@ -29,7 +29,7 @@ Meteor.parsePublications.addCitations = function() {
 					
 					cite_search_obj = citation_check_objs.pop();
 					
-					window.open(cite_search_obj.url + '&wc_cite_search=true&project_id=' + Session.get('current_project'), 'xhr_window',"width=400,height=400");
+					window.open(cite_search_obj.url + '&wc_cite_search=true&timer_id='+ window.bibnet_timer+ '&project_id=' + Session.get('current_project'), 'xhr_window',"width=400,height=400");
 				
 				} else { 
 					console.log('*******************************************')

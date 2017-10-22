@@ -27,11 +27,13 @@
   });
 
   serverMessages.listen('serverMessage:error', function (subject, message, options) {
+    console.log('error!');
+    clearInterval(window.bibnet_timer);
 
     var subject_array  = subject.split('______'); 
     console.log('options', subject_array)
     if(Session.get('current_project') === subject_array[1]) {
       Notifications.error(subject_array[0], message, options);
-      clearInterval(window.bibnet_timer);
+      
     }
   });

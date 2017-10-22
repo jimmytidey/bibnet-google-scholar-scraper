@@ -63,7 +63,8 @@ Meteor.methods({
  			author_obj: author_obj,
  			publication_obj: publication_obj,
  			html: cite_obj.html, 
- 			project_id: cite_obj.project_id
+ 			project_id: cite_obj.project_id,
+ 			timer_id: cite_obj.timer_id
  		} 
 
  		bibnet.addCitations(cite_search_obj);

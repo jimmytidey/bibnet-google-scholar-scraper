@@ -83,7 +83,7 @@ Template.publicationSearchResults.helpers({
 			
 			Meteor.subscribe('pub_search_results', proj_id);
 		}
-		var search_pubs = Publications.find({search_result_project_ids: proj_id}, {limit:5});
+		var search_pubs = Publications.find({search_result_project_ids: proj_id}, {limit:10});
 		return  search_pubs;
 	}
 });

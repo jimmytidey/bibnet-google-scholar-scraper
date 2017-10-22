@@ -53,7 +53,7 @@ Meteor.methods({
             var edge_obj = {
                   "source": source_author,
                   "target": target_author,
-                  "tootip": source_author + ' cites ' + target_author + ' in <em>' + target.title + '</em>',
+                  "tooltip": source_author + ' cites ' + target_author + ' in <em>' + target.title + '</em>',
                   "link_type": "cites",
                   "color": "#99d594",
                   type: 'curvedArrow',

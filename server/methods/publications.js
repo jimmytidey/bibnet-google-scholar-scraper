@@ -43,7 +43,8 @@ Meteor.methods({
 		Publications.update({_id: publication_id}, {$pop: {corpus_project_ids: project_id}});
 		 
 	},
-	parsePublicationHTML: function(html, project_id) { 
+	parsePublicationHTML: function(html, project_id) {
+		console.log('hi'); 		 
 		console.log('user_id for parsePublicationHTML', project_id);
 		bibnet.parsePublicationHTML(html, project_id) 
 	}, 

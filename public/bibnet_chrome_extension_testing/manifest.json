@@ -14,6 +14,7 @@
       
       "matches": [
           "http://localhost/*", "https://whocites.com/","https://www.whocites.com/",
+          "https://d8b8b15e.ngrok.io/*", "https://d8b8b15e.ngrok.io/*",
           "http://scholar.google.com/*", "https://scholar.google.com/*",
           "http://scholar.google.ad/*", "https://scholar.google.ad/*",
           "http://scholar.google.ae/*", "https://scholar.google.ae/*",

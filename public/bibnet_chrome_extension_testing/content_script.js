@@ -1,5 +1,5 @@
 
-var server_url ='https://13b9c9de.ngrok.io';
+var server_url ='https://969a9394.ngrok.io';
 
 document.cookie = "wc_extension_version=1.1";
 
@@ -12,11 +12,11 @@ if(window.location.href.search('scholar.google')>0){
  			author_name: getParameterByName('q'), 
  			google_pub_id: getParameterByName('cites'), 
  			html: document.documentElement.innerHTML, 
- 			project_id: getParameterByName('project_id') 
+ 			project_id: getParameterByName('project_id'), 
+ 			timer_id: getParameterByName('timer_id') 
 	 	}]
 
 	 	console.log(cite_obj);
-	 	
 	 	var data = JSON.stringify(cite_obj);
 	 	var xhr = new XMLHttpRequest();
 	 	xhr.open("POST", server_url + '/methods/addCitations', true);
@@ -32,7 +32,6 @@ if(window.location.href.search('scholar.google')>0){
  		]
 
 	 	console.log(cite_obj);
-	 	
 	 	var data = JSON.stringify(cite_obj);
 	 	var xhr = new XMLHttpRequest();
 	 	xhr.open("POST", server_url + '/methods/parsePublicationHTML', true);

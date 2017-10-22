@@ -30,3 +30,11 @@ This software should be used in compliance with Google's rules. Much as Zotero u
 it's metadata fields, this seems like a reasonable use of their service.
 
 There is a keys.js where you can provide cookie details, so that you are querying Google as a logged in user. I don't think this adds any particular advantage. 
+
+## Testing locally 
+You can't send data back to localhost from the google scholar plugin because it won't have https enabled. 
+
+You need to use Ngrok to tunnel an external https website that it tempoaraily sets up for you back to LocalHost. 
+
+Install ngrok, then run  ./ngrok http 3000 
+
