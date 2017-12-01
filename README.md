@@ -32,9 +32,17 @@ it's metadata fields, this seems like a reasonable use of their service.
 There is a keys.js where you can provide cookie details, so that you are querying Google as a logged in user. I don't think this adds any particular advantage. 
 
 ## Testing locally 
-You can't send data back to localhost from the google scholar plugin because it won't have https enabled. 
+Google Scholar is an HTTPS website, so you can only return data from it using an HTTPS request (browser enforces this). Localhost is not HTTPS. What you need to do is download ngrok (https://ngrok.com/). This will let you proxy requests via an HTTPS website they provide for you. So as far as the browser it concerned, the request will go across HTTPS.
 
-You need to use Ngrok to tunnel an external https website that it tempoaraily sets up for you back to LocalHost. 
+Install ngrok, then run  './ngrok http 3000' from the directory it is downloaded to.
 
-Install ngrok, then run  ./ngrok http 3000 
+Then you need to edit 
+
+public/bibnet_chrome_extension_testing/content_script.js
+
+and change "var server_url="
+
+To whatever ngrok provided as a proxy address.
+
+
 
